@@ -26,3 +26,5 @@ Deadline: Kamis, 16 April 2026, 23:59
 |Dummy Data + Model|Megan|Pakai faker|
 |View|Ailin|Menampilkan tabel aja, pakai Bootstrap|
 |Controller|Margason|-|
+
+<img width="884" height="873" alt="image" src="https://github.com/user-attachments/assets/c7c49f33-d383-473c-9b51-7836e73d1a24" />
