@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('email', 100)->unique();
             $table->string('nomor_telepon', 15)->unique();
             $table->boolean('is_admin')->default(false);
-            $table->unsignedBigInteger('member_id');
+            $table->unsignedBigInteger('member_id')->nullable();
             $table->foreign('member_id')->references('id')->on('member');
-            $table->unsignedBigInteger('dokter_id');
+            $table->unsignedBigInteger('dokter_id')->nullable();
             $table->foreign('dokter_id')->references('id')->on('dokter');
             $table->timestamps();
         });
