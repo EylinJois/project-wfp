@@ -5,7 +5,7 @@ Yang harus dilakukan pertama:
 2. Buka project di VSCode
 3. Jalankan perintah `composer install`
 4. Jalankan perintah `copy .env.example .env` 
-5. Jalankan perintah `php artisan:key generate`
+5. Jalankan perintah `php artisan key:generate`
 6. Jalankan perintah `php artisan migrate`
 
 Setiap akan membuat perubahan: 

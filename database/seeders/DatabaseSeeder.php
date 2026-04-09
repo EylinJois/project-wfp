@@ -16,30 +16,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
 
-        // Member::factory(10)->create()->each(function ($member) {
-        //     User::factory()->create([
-        //         'member_id' => $member->id,
-        //     ]);
-        // });
+        Member::factory(10)->create()->each(function ($member) {
+            User::factory()->create([
+                'member_id' => $member->id,
+            ]);
+        });
 
-        // $this->call([
-        //     SpesialisasiSeeder::class,
-        //     DokterSeeder::class,
-        // ]);
+        $this->call([
+            SpesialisasiSeeder::class,
+            DokterSeeder::class,
+        ]);
 
-        // Artikel::factory(10)->create();
+        Artikel::factory(10)->create();
 
-        // $this->call([
-        //     KonsultasiSeeder::class,
-        //     ChatSeeder::class,
-        // ]);
+        $this->call([
+            KonsultasiSeeder::class,
+            ChatSeeder::class,
+        ]);
 
     }
 }
