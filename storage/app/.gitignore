@@ -1,3 +1,6 @@
 *
-#!public/
-#!.gitignore
+!public/
+!.gitignore
+!*.png
+!*.jpg
+!*.jpeg
