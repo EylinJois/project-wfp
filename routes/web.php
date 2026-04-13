@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\ArtikelController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\DokterController;
+use App\Http\Controllers\KonsultasiController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\SpesialisasiController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,32 +21,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('layout.app');
 });
 
-
-Route::get('/artikel', function () {
-    $data = [
-        (object)[
-            'id' => 1,
-            'judul' => 'Artikel 1',
-            'tanggal' => '2024-06-01',
-            'isi' => 'Isi artikel 1',
-            'foto' => 'foto1.jpg',
-            'dokter_id' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ],
-        (object)[
-            'id' => 2,
-            'judul' => 'Artikel 2',
-            'tanggal' => '2024-06-02',
-            'isi' => 'Isi artikel 2',
-            'foto' => 'foto2.jpg',
-            'dokter_id' => 2,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ],
-    ];
-    return view('artikel', ['data' => $data]);
-});
+Route::resource('artikel', ArtikelController::class);
+Route::resource('chat', ChatController::class);
+Route::resource('dokter', DokterController::class);
+Route::resource('konsultasi', KonsultasiController::class);
+Route::resource('member', MemberController::class);
+Route::resource('spesialisasi', SpesialisasiController::class);
+Route::resource('user', UserController::class);
