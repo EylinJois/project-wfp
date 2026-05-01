@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -24,7 +25,7 @@ class UserFactory extends Factory
             'nomor_telepon' => fake()->unique()->numerify('08##########'),
             'is_admin' => 0,
             'created_at' => fake()->dateTimeBetween('-1 month', 'now'),
-            'updated_at' =>fake()->dateTime(now()),
+            'updated_at' => fake()->dateTime(now()),
         ];
     }
 
