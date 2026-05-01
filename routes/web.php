@@ -21,8 +21,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('layout.app');
-});
+    return view('home');
+})->name('home');
 
 Route::resource('artikel', ArtikelController::class);
 Route::resource('chat', ChatController::class);
