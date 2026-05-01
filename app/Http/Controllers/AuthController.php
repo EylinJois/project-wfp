@@ -14,41 +14,39 @@ use Illuminate\View\View;
 class AuthController extends Controller
 {
     /**
-     * All use password: password123
-     * Roles: Admin, Member (Margason/Megan), Dokter (Elly)
+     * Hardcoded testing accounts (no database required)
+     * Password: password123 for all
      */
-
-    private const REGISTER_PRESETS = [
-        'admin' => [
-            'label' => 'Template Admin',
-            'username' => 'testadmin',
-            'email' => 'testadmin@wfp.com',
+    private const HARDCODED_ACCOUNTS = [
+        'admin@wfp.com' => [
             'password' => 'password123',
-            'nomor_telepon' => '085200000101',
+            'username' => 'admin',
         ],
-        'member' => [
-            'label' => 'Template Member',
-            'username' => 'testmember',
-            'email' => 'testmember@wfp.com',
+        'member@wfp.com' => [
             'password' => 'password123',
-            'nomor_telepon' => '085200000102',
+            'username' => 'member',
         ],
-        'dokter' => [
-            'label' => 'Template Dokter',
-            'username' => 'testdokter',
-            'email' => 'testdokter@wfp.com',
+        'dokter@wfp.com' => [
             'password' => 'password123',
-            'nomor_telepon' => '085200000103',
+            'username' => 'dokter',
         ],
     ];
 
-    public function showLogin(Request $request): View
+    public function showLogin(Request $request): View|RedirectResponse
     {
+        if (Auth::check() || $request->session()->has('hardcoded_auth')) {
+            return redirect('/');
+        }
+
         return view('auth.login');
     }
 
     public function login(Request $request): RedirectResponse
     {
+        if (Auth::check() || $request->session()->has('hardcoded_auth')) {
+            return redirect('/');
+        }
+
         $validated = $request->validate([
             'login' => ['required', 'string', 'max:100'],
             'password' => ['required', 'string', 'max:255'],
@@ -56,6 +54,35 @@ class AuthController extends Controller
             'preset' => ['nullable', 'string'],
         ]);
 
+        // Check if login is a hardcoded testing account
+        if (isset(self::HARDCODED_ACCOUNTS[$validated['login']])) {
+            $account = self::HARDCODED_ACCOUNTS[$validated['login']];
+            if ($account['password'] === $validated['password']) {
+                $request->session()->put('hardcoded_auth', [
+                    'login' => $validated['login'],
+                    'username' => $account['username'],
+                    'is_admin' => $account['username'] === 'admin',
+                ]);
+                $request->session()->regenerate();
+
+                // Store last login for remember-me
+                if ($request->boolean('remember')) {
+                    Cookie::queue(
+                        'wfp_last_login',
+                        $validated['login'],
+                        60 * 24 * 30,
+                        '/',
+                        null,
+                        false,
+                        false
+                    );
+                }
+
+                return redirect()->intended('/')->with('status', 'Login berhasil.');
+            }
+        }
+
+        // Not a hardcoded account - check database
         $loginField = filter_var($validated['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         $credentials = [
             $loginField => $validated['login'],
@@ -72,16 +99,16 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        // Store last login username/email for remember-me functionality (accessible from JavaScript)
+        // Store last login username/email for remember-me functionality
         if ($request->boolean('remember')) {
             Cookie::queue(
                 'wfp_last_login',
                 $validated['login'],
-                60 * 24 * 30,  // 30 days
-                '/',           // path
-                null,          // domain
-                false,         // secure (set false for HTTP, true for HTTPS only)
-                false          // httpOnly: false so JavaScript can access it
+                60 * 24 * 30,
+                '/',
+                null,
+                false,
+                false
             );
         }
 
@@ -90,21 +117,12 @@ class AuthController extends Controller
 
     public function showRegister(Request $request): View
     {
-        $defaultKey = array_key_first(self::REGISTER_PRESETS);
-        $selectedPreset = $request->cookie('wfp_register_preset', $defaultKey);
-        $selectedPreset = array_key_exists($selectedPreset, self::REGISTER_PRESETS) ? $selectedPreset : $defaultKey;
-
-        return view('auth.register', [
-            'presets' => self::REGISTER_PRESETS,
-            'selectedPreset' => $selectedPreset,
-            'prefill' => self::REGISTER_PRESETS[$selectedPreset],
-        ]);
+        return view('auth.register');
     }
 
     public function register(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'preset' => ['nullable', 'string'],
             'username' => ['required', 'string', 'max:100', Rule::unique('user', 'username')],
             'email' => ['required', 'email', 'max:100', Rule::unique('user', 'email')],
             'nomor_telepon' => ['required', 'string', 'max:15', Rule::unique('user', 'nomor_telepon')],
@@ -124,15 +142,17 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        Cookie::queue(cookie('wfp_register_preset', $request->input('preset', 'member'), 60 * 24 * 30));
-        Cookie::queue(cookie('wfp_last_registered_username', $validated['username'], 60 * 24 * 30));
-
         return redirect('/')->with('status', 'Akun baru berhasil dibuat dan langsung login.');
     }
 
     public function logout(Request $request): RedirectResponse
     {
+        if (! Auth::check() && ! $request->session()->has('hardcoded_auth')) {
+            return redirect()->route('login')->with('status', 'Anda sudah logout.');
+        }
+
         Auth::logout();
+        $request->session()->forget('hardcoded_auth');
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

@@ -32,7 +32,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 });
 
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::resource('artikel', ArtikelController::class);
 Route::resource('chat', ChatController::class);

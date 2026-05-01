@@ -15,6 +15,17 @@
                     <a href="{{ route('register') }}" class="btn btn-outline-secondary btn-sm">Buat akun</a>
                 </div>
 
+                <div class="form-group">
+                    <label for="preset">Pilih Akun</label>
+                    <select id="preset" name="preset" class="form-control">
+                        <option value="">-- Pilih akun untuk testing --</option>
+                        <option value="admin">Admin</option>
+                        <option value="member">Member</option>
+                        <option value="dokter">Dokter</option>
+                    </select>
+                    <small class="form-text text-muted">Pilih akun akan otomatis mengisi field login.</small>
+                </div>
+
                 <form id="login-form" action="{{ route('login.submit') }}" method="POST">
                     @csrf
 
@@ -47,7 +58,25 @@
 @push('scripts')
 <script>
     (function () {
+        // Hardcoded preset accounts for testing
+        const presets = {
+            admin: {
+                login: 'admin@wfp.com',
+                password: 'password123'
+            },
+            member: {
+                login: 'member@wfp.com',
+                password: 'password123'
+            },
+            dokter: {
+                login: 'dokter@wfp.com',
+                password: 'password123'
+            }
+        };
+
         const loginField = document.getElementById('login');
+        const passwordField = document.getElementById('password');
+        const presetSelect = document.getElementById('preset');
         
         // Get cookie by name
         function getCookie(name) {
@@ -62,12 +91,20 @@
             return null;
         }
         
-        // Auto-fill login field from remember-me cookie
+        // Auto-fill from remember-me cookie if exists
         const lastLogin = getCookie('wfp_last_login');
         if (lastLogin && lastLogin !== '') {
             loginField.value = lastLogin;
-            console.log('Auto-filled login field with: ' + lastLogin);
         }
+        
+        // Handle preset selection
+        presetSelect.addEventListener('change', function () {
+            const selectedPreset = presets[this.value];
+            if (selectedPreset) {
+                loginField.value = selectedPreset.login;
+                passwordField.value = selectedPreset.password;
+            }
+        });
     })();
 </script>
 @endpush

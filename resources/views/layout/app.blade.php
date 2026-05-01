@@ -54,6 +54,11 @@
 </head>
 
 <body>
+@php
+    $hardcodedAuth = session('hardcoded_auth');
+    $isAuthenticated = auth()->check() || !empty($hardcodedAuth);
+    $displayUsername = auth()->check() ? auth()->user()->username : data_get($hardcodedAuth, 'username');
+@endphp
 <nav class="navbar navbar-expand-lg navbar-light app-navbar sticky-top">
     <div class="container">
         <a class="navbar-brand font-weight-bold d-flex align-items-center" href="{{ url('/') }}">
@@ -69,19 +74,19 @@
             <div class="mr-auto"></div>
 
             <div class="form-inline my-2 my-lg-0">
-                @guest
+                @if (! $isAuthenticated)
                     <a href="{{ route('login') }}" class="btn btn-outline-primary mr-2">Login</a>
                     <a href="{{ route('register') }}" class="btn btn-primary">Register</a>
                 @else
                     <div class="text-right mr-3 d-none d-md-block">
                         <div class="small text-muted">Masuk sebagai</div>
-                        <div class="font-weight-bold">{{ auth()->user()->username }}</div>
+                        <div class="font-weight-bold">{{ $displayUsername }}</div>
                     </div>
                     <form action="{{ route('logout') }}" method="POST" class="mb-0">
                         @csrf
                         <button type="submit" class="btn btn-outline-danger">Logout</button>
                     </form>
-                @endguest
+                @endif
             </div>
         </div>
     </div>
