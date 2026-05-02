@@ -10,4 +10,9 @@ class Artikel extends Model
     use HasFactory;
     protected $table = 'artikel';
     protected $guarded = [];
+
+    public function dokter()
+    {
+        return $this->belongsTo(\App\Models\Dokter::class);
+    }
 }

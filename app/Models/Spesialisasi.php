@@ -10,4 +10,5 @@ class Spesialisasi extends Model
     use HasFactory;
     protected $table = 'spesialisasi';
     protected $guarded = [];
+    public $timestamps = false;
 }

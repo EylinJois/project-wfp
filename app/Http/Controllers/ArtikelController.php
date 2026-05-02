@@ -13,7 +13,7 @@ class ArtikelController extends Controller
             ->orderByDesc('tanggal')
             ->get();
 
-        return view('artikel', compact('data'));
+        return view('artikel.index', compact('data'));
     }
 
     public function create()
@@ -38,7 +38,7 @@ class ArtikelController extends Controller
 
     public function show(Artikel $artikel)
     {
-        return response()->json(['data' => $artikel]);
+        return view('artikel.show', compact('artikel'));
     }
 
     public function edit(Artikel $artikel)
