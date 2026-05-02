@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// TODO: Tambahkan routing untuk halaman lain.
+
 Route::get('/', function () {
     return view('home');
 })->name('home');

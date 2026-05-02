@@ -17,6 +17,8 @@ Setiap akan membuat perubahan:
 
 ---
 
+## Miestone
+
 ### Milestone 1
 Deadline: Kamis, 16 April 2026, 23:59
 
@@ -27,4 +29,15 @@ Deadline: Kamis, 16 April 2026, 23:59
 |View|Ailin|Menampilkan tabel aja, pakai Bootstrap|
 |Controller|Margason|-|
 
+### Milestone 2
+|Jobdesc|Nama|Catatan
+|-|-|-|
+|Perbarui seeder untuk user|Megan|Buat 1 dummy user untuk masing-masing peran. Jangan gunakan faker agar data konsisten.|
+|Gunakan template AdminLTE|Kevin|Menambahkan semua menu yang ada. Belum termasuk halaman, routing, dan visibility dari setiap menu berdasarkan hak akses.|
+|Mengatur visibility dari menu yang ada berdasarkan hak akses |Megan|Tunggu Margason selesai.|
+|Fitur login & register|Margason|Gunakan session & cookies. Tambahkan combo box dan buat field auto fill berdasarkan pilihan pada combo box. |
+|Fitur artikel|Elly|Buat halaman untuk menampilkan daftar artikel dan detail artikel ketika artikel tertentu dibuka.|
+|Hubungkan view milestone 1|Ailin|Hubungkan view untuk melihat isi database yang dibuat di milestone 1 dengan menu database yang sudah disediakan.|
+
+### ERD
 <img width="884" height="873" alt="image" src="https://github.com/user-attachments/assets/c7c49f33-d383-473c-9b51-7836e73d1a24" />

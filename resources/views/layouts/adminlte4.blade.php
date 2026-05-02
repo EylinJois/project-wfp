@@ -222,6 +222,7 @@
                     </a>
                 </li>
 
+                <!-- TODO: Ganti route untuk menampilkan setiap tabel -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-table"></i>
@@ -232,40 +233,54 @@
                     </a>
                     <ul class="nav nav-treeview">
 
-                    {{-- <li class="nav-item">
-                        <a href={{ route('categories.index') }} class="nav-link @yield('menu-categories')">
-                        <i class="nav-icon bi bi-circle"></i>
-                        <p>Category</p>
-                        </a>
-                    </li>
-
                     <li class="nav-item">
-                        <a href={{ route('users.index') }} class="nav-link @yield('menu-users')">
+                        <a href={{ route('home') }} class="nav-link @yield('menu')">
                         <i class="nav-icon bi bi-circle"></i>
                         <p>User</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href={{ route('doctors.index') }} class="nav-link @yield('menu-doctors')">
+                        <a href={{ route('home') }} class="nav-link @yield('menu')">
                         <i class="nav-icon bi bi-circle"></i>
-                        <p>Doctor</p>
+                        <p>Dokter</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href={{ route('services.index') }} class="nav-link @yield('menu-services')">
+                        <a href={{ route('home') }} class="nav-link @yield('menu')">
                         <i class="nav-icon bi bi-circle"></i>
-                        <p>Service</p>
+                        <p>Member</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href={{ route('transactions.index') }} class="nav-link @yield('menu-Transactions')">
+                        <a href={{ route('home') }} class="nav-link @yield('menu')">
                         <i class="nav-icon bi bi-circle"></i>
-                        <p>Transaction</p>
+                        <p>Spesialisasi</p>
                         </a>
-                    </li> --}}
+                    </li>
+
+                    <li class="nav-item">
+                        <a href={{ route('home') }} class="nav-link @yield('menu')">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>Chat</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href={{ route('home') }} class="nav-link @yield('menu')">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>Artikel</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href={{ route('home') }} class="nav-link @yield('menu')">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>Konsultasi</p>
+                        </a>
+                    </li>
 
                     </ul>
                 </li>
