@@ -7,6 +7,14 @@ use Illuminate\Http\Request;
 
 class ArtikelController extends Controller
 {
+    public function dbIndex()
+    {
+        $data = Artikel::query()
+            ->orderByDesc('tanggal')
+            ->get();
+
+        return view('artikel', compact('data'));
+    }
     public function index()
     {
         $data = Artikel::query()

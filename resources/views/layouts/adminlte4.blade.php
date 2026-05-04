@@ -192,7 +192,7 @@
 
                 <!-- TODO: Ganti route untuk article -->
                 <li class="nav-item">
-                    <a href={{ route('home') }} class="nav-link @yield('menu-article')">
+                    <a href={{ route('artikel') }} class="nav-link @yield('menu-article')">
                     <i class="nav-icon fa-regular fa-newspaper"></i>
                     <p>Article</p>
                     </a>
@@ -234,49 +234,49 @@
                     <ul class="nav nav-treeview">
 
                     <li class="nav-item">
-                        <a href={{ route('home') }} class="nav-link @yield('menu')">
+                        <a href={{ route('users') }} class="nav-link @yield('menu')">
                         <i class="nav-icon bi bi-circle"></i>
                         <p>User</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href={{ route('home') }} class="nav-link @yield('menu')">
+                        <a href={{ route('doctors') }} class="nav-link @yield('menu')">
                         <i class="nav-icon bi bi-circle"></i>
                         <p>Dokter</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href={{ route('home') }} class="nav-link @yield('menu')">
+                        <a href={{ route('members') }} class="nav-link @yield('menu')">
                         <i class="nav-icon bi bi-circle"></i>
                         <p>Member</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href={{ route('home') }} class="nav-link @yield('menu')">
+                        <a href={{ route('spesialisasi') }} class="nav-link @yield('menu')">
                         <i class="nav-icon bi bi-circle"></i>
                         <p>Spesialisasi</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href={{ route('home') }} class="nav-link @yield('menu')">
+                        <a href={{ route('chat') }} class="nav-link @yield('menu')">
                         <i class="nav-icon bi bi-circle"></i>
                         <p>Chat</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href={{ route('home') }} class="nav-link @yield('menu')">
+                        <a href={{ route('dbArtikel') }} class="nav-link @yield('menu')">
                         <i class="nav-icon bi bi-circle"></i>
                         <p>Artikel</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href={{ route('home') }} class="nav-link @yield('menu')">
+                        <a href={{ route('konsultasi') }} class="nav-link @yield('menu')">
                         <i class="nav-icon bi bi-circle"></i>
                         <p>Konsultasi</p>
                         </a>

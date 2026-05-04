@@ -20,7 +20,7 @@
     <p>{{ $artikel->isi }}</p>
 
     <p><b>Dokter:</b> {{ $artikel->dokter->nama_lengkap ?? 'N/A' }}</p>
-    <a href="{{ route('artikel.index') }}" class="btn btn-secondary">
+    <a href="{{ route('artikel') }}" class="btn btn-secondary">
         Back
     </a>
 </div>

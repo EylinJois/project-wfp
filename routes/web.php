@@ -26,10 +26,32 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::resource('artikel', ArtikelController::class);
-Route::resource('chat', ChatController::class);
-Route::resource('dokter', DokterController::class);
-Route::resource('konsultasi', KonsultasiController::class);
-Route::resource('member', MemberController::class);
-Route::resource('spesialisasi', SpesialisasiController::class);
-Route::resource('user', UserController::class);
+Route::get('artikel/db', [ArtikelController::class, 'dbIndex'])->name('dbArtikel');
+
+Route::resource('artikel', ArtikelController::class)->names([
+    'index' => 'artikel',
+    'show' => 'artikel.show',
+    'create' => 'artikel.create',
+    'store' => 'artikel.store',
+    'edit' => 'artikel.edit',
+    'update' => 'artikel.update',
+    'destroy' => 'artikel.destroy',
+]);
+Route::resource('chat', ChatController::class)->names([
+    'index' => 'chat',
+]);
+Route::resource('dokter', DokterController::class)->names([
+    'index' => 'doctors',
+]);
+Route::resource('konsultasi', KonsultasiController::class)->names([
+    'index' => 'konsultasi',
+]);
+Route::resource('member', MemberController::class)->names([
+    'index' => 'members',
+]);
+Route::resource('spesialisasi', SpesialisasiController::class)->names([
+    'index' => 'spesialisasi',
+]);
+Route::resource('user', UserController::class)->names([
+    'index' => 'users',
+]);

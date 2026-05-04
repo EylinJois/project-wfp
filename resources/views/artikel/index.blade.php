@@ -1,10 +1,10 @@
 @extends('layouts.adminlte4')
 
-@section('title', 'Artikel')
+@section('title', 'List of Articles')
 
 @section('content')
 <div class="container">
-    <h1>Artikel</h1>
+    <h1>List of Articles</h1>
 
     <table class="table">
         <thead>
