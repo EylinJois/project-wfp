@@ -23,11 +23,12 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        Member::factory(10)->create()->each(function ($member) {
-            User::factory()->create([
-                'member_id' => $member->id,
-            ]);
-        });
+        //TIDAK PAKAI FAKER
+        // Member::factory(10)->create()->each(function ($member) {
+        //     User::factory()->create([
+        //         'member_id' => $member->id,
+        //     ]);
+        // });
 
         $this->call([
             SpesialisasiSeeder::class,
