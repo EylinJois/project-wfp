@@ -1,6 +1,7 @@
 @extends('layouts.adminlte4')
 
 @section('title', 'List of Articles')
+@section('menu-article', 'active')
 
 @section('content')
 <div class="container">
