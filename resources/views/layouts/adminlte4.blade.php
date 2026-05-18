@@ -92,42 +92,36 @@
           <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown user-menu">
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <!--TODO: Fotonya ntar diganti, di tabel user ndak nyimpan foto btw... -->
                 <img
                   src="{{ asset('adminlte4/assets/img/user2-160x160.jpg') }}"
                   class="user-image rounded-circle shadow"
                   alt="User Image"
                 />
-                <span class="d-none d-md-inline">Username</span>
+                <span class="d-none d-md-inline">
+                    {{ Auth::user()->username }}
+                </span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <!--begin::User Image-->
-                <li class="user-header text-bg-primary">
+                <li class="user-header">
+                    <!--TODO: Fotonya ntar diganti-->
                   <img
                     src="{{ asset('adminlte4/assets/img/user2-160x160.jpg') }}"
                     class="rounded-circle shadow"
                     alt="User Image"
                   />
                   <p>
-                    Alexander Pierce - Web Developer
-                    <small>Member since Nov. 2023</small>
+                    {{ Auth::user()->username }}
+                    <small>{{ Auth::user()->email }}</small>
                   </p>
                 </li>
                 <!--end::User Image-->
-                <!--begin::Menu Body-->
-                <li class="user-body">
-                  <!--begin::Row-->
-                  <div class="row">
-                    <div class="col-4 text-center"><a href="#">Followers</a></div>
-                    <div class="col-4 text-center"><a href="#">Sales</a></div>
-                    <div class="col-4 text-center"><a href="#">Friends</a></div>
-                  </div>
-                  <!--end::Row-->
-                </li>
-                <!--end::Menu Body-->
                 <!--begin::Menu Footer-->
                 <li class="user-footer">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
-                  <a href="#" class="btn btn-default btn-flat float-end">Sign out</a>
+                    <button type="submit" class="btn btn-danger btn-flat float-end" data-bs-toggle="modal" data-bs-target="#signoutModal">
+                        Sign out
+                    </button>
                 </li>
                 <!--end::Menu Footer-->
               </ul>
@@ -175,54 +169,67 @@
                 </li>
 
                 <!-- TODO: Ganti route untuk dashboard -->
+                @if(Auth::user()->is_admin)
                 <li class="nav-item">
                     <a href={{ route('home') }} class="nav-link @yield('dashboard')">
                     <i class="nav-icon bi bi-speedometer"></i>
                     <p>Dashboard</p>
                     </a>
                 </li>
+                @endif
 
                 <!-- TODO: Ganti route untuk dokter -->
+                @if(!is_null(Auth::user()->member_id) || !is_null(Auth::user()->dokter_id))
                 <li class="nav-item">
                     <a href={{ route('home') }} class="nav-link @yield('menu-doctor')">
                     <i class="nav-icon fa-solid fa-user-doctor"></i>
                     <p>Doctor</p>
                     </a>
                 </li>
+                @endif
 
                 <!-- TODO: Ganti route untuk article -->
+                @if(!is_null(Auth::user()->member_id) || !is_null(Auth::user()->dokter_id))
                 <li class="nav-item">
                     <a href={{ route('artikel') }} class="nav-link @yield('menu-article')">
                     <i class="nav-icon fa-regular fa-newspaper"></i>
                     <p>Article</p>
                     </a>
                 </li>
+                @endif
 
                 <!-- TODO: Ganti route untuk appointment -->
+                @if(!is_null(Auth::user()->member_id) || !is_null(Auth::user()->dokter_id))
                 <li class="nav-item">
-                    <a href={{ route('home') }} class="nav-link @yield('menu-appointment')">
+                    <a href={{ route('home') }} class="nav-link @yield('menu-consultation')">
                     <i class="nav-icon fa-regular fa-handshake"></i>
-                    <p>Appointment</p>
+                    <p>Consultation</p>
                     </a>
                 </li>
+                @endif
 
                 <!-- TODO: Ganti route untuk schedule -->
+                @if(!is_null(Auth::user()->dokter_id))
                 <li class="nav-item">
                     <a href={{ route('home') }} class="nav-link @yield('menu-schedule')">
                     <i class="nav-icon fa-regular fa-calendar"></i>
                     <p>My Schedule</p>
                     </a>
                 </li>
+                @endif
 
                 <!-- TODO: Ganti route untuk manage user -->
+                @if(Auth::user()->is_admin)
                 <li class="nav-item">
                     <a href={{ route('home') }} class="nav-link @yield('menu-manage-user')">
                     <i class="nav-icon fa-solid fa-user-gear"></i>
                     <p>Manage User</p>
                     </a>
                 </li>
+                @endif
 
                 <!-- TODO: Ganti route untuk menampilkan setiap tabel -->
+                @if(Auth::user()->is_admin)
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-table"></i>
@@ -284,6 +291,7 @@
 
                     </ul>
                 </li>
+                @endif
             </ul>
             <!--end::Sidebar Menu-->
           </nav>
@@ -547,6 +555,30 @@
       sparkline3.render();
     </script>
     <!--end::Script-->
+
+    <div class="modal fade" id="signoutModal" tabindex="-1" aria-labelledby="signoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="signoutModalLabel">Sign out Confirmation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure want to sign out?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf 
+                    <button type="submit" class="btn btn-danger">
+                        Sign out
+                    </button>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
   </body>
   <!--end::Body-->
 </html>

@@ -16,23 +16,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
-        //TIDAK PAKAI FAKER
-        // Member::factory(10)->create()->each(function ($member) {
-        //     User::factory()->create([
-        //         'member_id' => $member->id,
-        //     ]);
-        // });
-
         $this->call([
             SpesialisasiSeeder::class,
+            MemberSeeder::class,
             DokterSeeder::class,
+            UserSeeder::class, 
             ArtikelSeeder::class,
         ]);
 
