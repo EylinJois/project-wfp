@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid mt-4">
 
-    <h1 class="mb-4">Spesialisasi</h1>
+    <h1 class="mb-4">Specialty</h1>
 
     <div class="card p-3">
         <div class="table-responsive">
@@ -11,14 +11,14 @@
                 <thead class="table-light">
                     <tr>
                         <th class="px-3 py-2">ID</th>
-                        <th class="px-3 py-2">Nama</th>
+                        <th class="px-3 py-2">Name</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($data as $spesialisasi)
+                    @foreach ($specialties as $specialty)
                         <tr>
-                            <td class="px-3 py-2">{{ $spesialisasi->id }}</td>
-                            <td class="px-3 py-2">{{ $spesialisasi->nama }}</td>
+                            <td class="px-3 py-2">{{ $specialty->id }}</td>
+                            <td class="px-3 py-2">{{ $specialty->name }}</td>
                         </tr>
                     @endforeach
                 </tbody>

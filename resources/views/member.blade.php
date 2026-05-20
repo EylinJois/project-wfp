@@ -11,20 +11,20 @@
                 <thead class="table-light">
                     <tr>
                         <th class="px-3 py-2">ID</th>
-                        <th class="px-3 py-2">Nama lengkap</th>
-                        <th class="px-3 py-2">Tanggal Lahir</th>
-                        <th class="px-3 py-2">Foto</th>
-                        <th class="px-3 py-2">Dibuat</th>
-                        <th class="px-3 py-2">Diperbarui</th>
+                        <th class="px-3 py-2">Full name</th>
+                        <th class="px-3 py-2">Date of Birth</th>
+                        <th class="px-3 py-2">Photo</th>
+                        <th class="px-3 py-2">Created At</th>
+                        <th class="px-3 py-2">Updated At</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($data as $member)
+                    @foreach ($members as $member)
                     <tr>
                         <td class="px-3 py-2">{{ $member->id }}</td>
-                        <td class="px-3 py-2">{{ $member->nama_lengkap }}</td>
-                        <td class="px-3 py-2">{{ $member->tanggal_lahir }}</td>
-                        <td class="px-3 py-2">{{ $member->foto }}</td>
+                        <td class="px-3 py-2">{{ $member->full_name }}</td>
+                        <td class="px-3 py-2">{{ $member->date_of_birth }}</td>
+                        <td class="px-3 py-2">{{ $member->photo }}</td>
                         <td class="px-3 py-2">{{ $member->created_at }}</td>
                         <td class="px-3 py-2">{{ $member->updated_at }}</td>
                     </tr>

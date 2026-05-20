@@ -16,7 +16,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $table = 'users';
+
     protected $primaryKey = 'username';
 
     public $incrementing = false;
@@ -29,7 +29,7 @@ class User extends Authenticatable
         'nomor_telepon',
         'is_admin',
         'member_id',
-        'dokter_id'
+        'doctor_id'
     ];
 
     /**

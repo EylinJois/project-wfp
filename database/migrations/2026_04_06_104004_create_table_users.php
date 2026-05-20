@@ -15,12 +15,12 @@ return new class extends Migration
             $table->string('username',100)->primary();
             $table->string('password', 255);
             $table->string('email', 100)->unique();
-            $table->string('nomor_telepon', 15)->unique();
+            $table->string('phone_number', 15)->unique();
             $table->boolean('is_admin')->default(false);
             $table->unsignedBigInteger('member_id')->nullable();
-            $table->foreign('member_id')->references('id')->on('member');
-            $table->unsignedBigInteger('dokter_id')->nullable();
-            $table->foreign('dokter_id')->references('id')->on('dokter');
+            $table->foreign('member_id')->references('id')->on('members');
+            $table->unsignedBigInteger('doctor_id')->nullable();
+            $table->foreign('doctor_id')->references('id')->on('doctors');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user');
+        Schema::dropIfExists('users');
     }
 };

@@ -9,9 +9,9 @@ class MemberController extends Controller
 {
     public function index()
     {
-        $data = Member::query()->orderBy('nama_lengkap')->get();
+        $members = Member::query()->orderBy('fullname')->get();
 
-        return view('member', compact('data'));
+        return view('member', compact('members'));
     }
 
     public function create()
@@ -22,9 +22,9 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_lengkap' => ['required', 'string', 'max:100'],
-            'tanggal_lahir' => ['required', 'date'],
-            'foto' => ['required', 'string', 'max:255'],
+            'fullname' => ['required', 'string', 'max:100'],
+            'birth_of_date' => ['required', 'date'],
+            'photo' => ['required', 'string', 'max:255'],
         ]);
 
         Member::create($validated);
@@ -34,20 +34,20 @@ class MemberController extends Controller
 
     public function show(Member $member)
     {
-        return response()->json(['data' => $member]);
+        return response()->json(['members' => $member]);
     }
 
     public function edit(Member $member)
     {
-        return response()->json(['data' => $member]);
+        return response()->json(['members' => $member]);
     }
 
     public function update(Request $request, Member $member)
     {
         $validated = $request->validate([
-            'nama_lengkap' => ['required', 'string', 'max:100'],
-            'tanggal_lahir' => ['required', 'date'],
-            'foto' => ['required', 'string', 'max:255'],
+            'fullname' => ['required', 'string', 'max:100'],
+            'birth_of_date' => ['required', 'date'],
+            'photo' => ['required', 'string', 'max:255'],
         ]);
 
         $member->update($validated);
