@@ -44,9 +44,9 @@ class ArticleController extends Controller
         return redirect()->route('article.index');
     }
 
-    public function show(Article $articles)
+    public function show(Article $article)
     {
-        return view('article.show', compact('articles'));
+        return view('article.show', compact('article'));
     }
 
     public function edit(Article $article)

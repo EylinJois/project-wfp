@@ -27,7 +27,7 @@
                                 <td class="px-3 py-2">{{ $article->title }}</td>
                                 <td class="px-3 py-2">{{ $article->date }}</td>
                                 <td class="px-3 py-2">{{ $article->content }}</td>
-                                <td class="px-3 py-2">{{ $article->image }}</td>
+                                <td class="px-3 py-2">{{ $article->photo }}</td>
                                 <td class="px-3 py-2">{{ $article->doctor_id }}</td>
                                 <td class="px-3 py-2">{{ $article->created_at }}</td>
                                 <td class="px-3 py-2">{{ $article->updated_at }}</td>

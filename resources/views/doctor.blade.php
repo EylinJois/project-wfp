@@ -30,9 +30,9 @@
                             <td class="px-3 py-2">{{ $doctor->sip }}</td>
                             <td class="px-3 py-2">{{ $doctor->experience }}</td>
                             <td class="px-3 py-2">{{ $doctor->photo }}</td>
-                            <td class="px-3 py-2">{{ $doctor->specialization_id }}</td>
-                            <td class="px-3 py-2">{{ $doctor->start_practice }}</td>
-                            <td class="px-3 py-2">{{ $doctor->end_practice }}</td>
+                            <td class="px-3 py-2">{{ $doctor->specialty_id }}</td>
+                            <td class="px-3 py-2">{{ $doctor->start_time }}</td>
+                            <td class="px-3 py-2">{{ $doctor->end_time }}</td>
                             <td class="px-3 py-2">{{ $doctor->created_at }}</td>
                             <td class="px-3 py-2">{{ $doctor->updated_at }}</td>
                         </tr>

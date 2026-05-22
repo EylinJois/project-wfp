@@ -19,22 +19,6 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/', function () {
-        return view('home');
-    })->name('home');
-
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-    Route::resource('article', ArticleController::class)->names([
-        'index' => 'article.index',
-        'show' => 'article.show',
-        'create' => 'article.create',
-        'store' => 'article.store',
-        'edit' => 'article.edit',
-        'update' => 'article.update',
-        'destroy' => 'article.destroy',
-    ]);
-
     Route::middleware('role:member')->group(function () {
         // TODO: Isi routing untuk member.
     });
@@ -66,4 +50,21 @@ Route::middleware('auth')->group(function () {
             'index' => 'user',
         ]);
     });
+
+    Route::get('/', function () {
+        return view('home');
+    })->name('home');
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // TODO: Ini dipindahkan soalnya routing article/db bisa salah kebaca sama laravelnya. 
+    Route::resource('article', ArticleController::class)->names([
+        'index' => 'article.index',
+        'show' => 'article.show',
+        'create' => 'article.create',
+        'store' => 'article.store',
+        'edit' => 'article.edit',
+        'update' => 'article.update',
+        'destroy' => 'article.destroy',
+    ]);
 });

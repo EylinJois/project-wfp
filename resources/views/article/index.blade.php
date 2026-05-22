@@ -18,13 +18,13 @@
         </thead>
 
         <tbody>
-            @foreach ($data as $article)
+            @foreach ($articles as $article)
             <tr>
                 <td>{{ $article->id }}</td>
-                <td>{{ $article->judul }}</td>
-                <td>{{ $article->tanggal }}</td>
+                <td>{{ $article->title }}</td>
+                <td>{{ $article->date }}</td>
                 <td>
-                    <a href="{{ route('artikel.show', $article->id) }}"
+                    <a href="{{ route('article.show', $article->id) }}"
                         class="btn btn-primary btn-sm">
                         Detail
                     </a>

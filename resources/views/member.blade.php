@@ -22,8 +22,8 @@
                     @foreach ($members as $member)
                     <tr>
                         <td class="px-3 py-2">{{ $member->id }}</td>
-                        <td class="px-3 py-2">{{ $member->full_name }}</td>
-                        <td class="px-3 py-2">{{ $member->date_of_birth }}</td>
+                        <td class="px-3 py-2">{{ $member->fullname }}</td>
+                        <td class="px-3 py-2">{{ $member->birth_of_date }}</td>
                         <td class="px-3 py-2">{{ $member->photo }}</td>
                         <td class="px-3 py-2">{{ $member->created_at }}</td>
                         <td class="px-3 py-2">{{ $member->updated_at }}</td>
