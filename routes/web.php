@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\ArtikelController;
-use App\Http\Controllers\ChatController;
-use App\Http\Controllers\DokterController;
-use App\Http\Controllers\KonsultasiController;
-use App\Http\Controllers\MemberController;
-use App\Http\Controllers\SpesialisasiController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\SpecialtyController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -25,45 +25,45 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::resource('artikel', ArtikelController::class)->names([
-        'index' => 'artikel',
-        'show' => 'artikel.show',
-        'create' => 'artikel.create',
-        'store' => 'artikel.store',
-        'edit' => 'artikel.edit',
-        'update' => 'artikel.update',
-        'destroy' => 'artikel.destroy',
+    Route::resource('article', ArticleController::class)->names([
+        'index' => 'article.index',
+        'show' => 'article.show',
+        'create' => 'article.create',
+        'store' => 'article.store',
+        'edit' => 'article.edit',
+        'update' => 'article.update',
+        'destroy' => 'article.destroy',
     ]);
 
     Route::middleware('role:member')->group(function () {
         // TODO: Isi routing untuk member.
     });
 
-    Route::middleware('role:dokter')->group(function () {
+    Route::middleware('role:doctor')->group(function () {
         // TODO: Isi routing untuk dokter.
     });
 
     Route::middleware('role:admin')->group(function () {
         // TODO: Isi routing untuk admin.
-        Route::get('artikel/db', [ArtikelController::class, 'dbIndex'])->name('dbArtikel');
+        Route::get('article/db', [ArticleController::class, 'dbIndex'])->name('dbArticle');
 
         Route::resource('chat', ChatController::class)->names([
             'index' => 'chat',
         ]);
-        Route::resource('dokter', DokterController::class)->names([
-            'index' => 'doctors',
+        Route::resource('doctor', DoctorController::class)->names([
+            'index' => 'doctor',
         ]);
-        Route::resource('konsultasi', KonsultasiController::class)->names([
-            'index' => 'konsultasi',
+        Route::resource('consultation', ConsultationController::class)->names([
+            'index' => 'consultation',
         ]);
         Route::resource('member', MemberController::class)->names([
-            'index' => 'members',
+            'index' => 'member',
         ]);
-        Route::resource('spesialisasi', SpesialisasiController::class)->names([
-            'index' => 'spesialisasi',
+        Route::resource('specialty', SpecialtyController::class)->names([
+            'index' => 'specialty',
         ]);
         Route::resource('user', UserController::class)->names([
-            'index' => 'users',
+            'index' => 'user',
         ]);
     });
 });

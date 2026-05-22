@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('konsultasi', function (Blueprint $table) {
+        Schema::create('consultations', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('waktu');
+            $table->timestamp('time');
             $table->string('status', 20);
-            $table->enum('jenis_konsultasi', ['kosong', 'sedang berlangsung', 'selesai'])->default('kosong');
-            $table->text('catatan')->nullable();
+            $table->enum('consultation_type', ['none', 'ongoing', 'done'])->default('none');
+            $table->text('notes')->nullable();
             $table->unsignedBigInteger('member_id');
-            $table->foreign('member_id')->references('id')->on('member');
-            $table->unsignedBigInteger('dokter_id');
-            $table->foreign('dokter_id')->references('id')->on('dokter');
+            $table->foreign('member_id')->references('id')->on('members');
+            $table->unsignedBigInteger('doctor_id');
+            $table->foreign('doctor_id')->references('id')->on('doctors');
             
             $table->timestamps();
         });
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('konsultasi');
+        Schema::dropIfExists('consultations');
     }
 };

@@ -4,9 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\Artikel;
-use App\Models\Member;
-use App\Models\User;
+use App\Models\Article;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,17 +15,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            SpesialisasiSeeder::class,
+            SpecialtySeeder::class,
             MemberSeeder::class,
-            DokterSeeder::class,
-            UserSeeder::class, 
-            ArtikelSeeder::class,
+            DoctorSeeder::class,
+            UserSeeder::class,
+            ArticleSeeder::class,
         ]);
 
-        Artikel::factory(10)->create();
+        Article::factory(10)->create();
 
         $this->call([
-            KonsultasiSeeder::class,
+            ConsultationSeeder::class,
             ChatSeeder::class,
         ]);
 

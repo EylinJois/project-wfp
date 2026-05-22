@@ -11,24 +11,24 @@
                 <thead class="table-light">
                     <tr>
                         <th class="px-3 py-2">ID</th>
-                        <th class="px-3 py-2">Pesan</th>
-                        <th class="px-3 py-2">ID Dokter</th>
+                        <th class="px-3 py-2">Chat</th>
+                        <th class="px-3 py-2">ID Doctor</th>
                         <th class="px-3 py-2">ID Member</th>
-                        <th class="px-3 py-2">ID Konsultasi</th>
-                        <th class="px-3 py-2">Waktu Kirim</th>
-                        <th class="px-3 py-2">Dibuat</th>
-                        <th class="px-3 py-2">Diperbarui</th>
+                        <th class="px-3 py-2">ID Consultation</th>
+                        <th class="px-3 py-2">Delivered at</th>
+                        <th class="px-3 py-2">Created</th>
+                        <th class="px-3 py-2">Updated</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($data as $chat)
+                    @foreach ($chats as $chat)
                     <tr>
                         <td class="px-3 py-2">{{ $chat->id }}</td>
-                        <td class="px-3 py-2">{{ $chat->pesan }}</td>
-                        <td class="px-3 py-2">{{ $chat->dokter_id }}</td>
+                        <td class="px-3 py-2">{{ $chat->chat }}</td>
+                        <td class="px-3 py-2">{{ $chat->doctor_id }}</td>
                         <td class="px-3 py-2">{{ $chat->member_id }}</td>
-                        <td class="px-3 py-2">{{ $chat->konsultasi_id }}</td>
-                        <td class="px-3 py-2">{{ $chat->waktu_kirim }}</td>
+                        <td class="px-3 py-2">{{ $chat->consultation_id }}</td>
+                        <td class="px-3 py-2">{{ $chat->delivered_at }}</td>
                         <td class="px-3 py-2">{{ $chat->created_at }}</td>
                         <td class="px-3 py-2">{{ $chat->updated_at }}</td>
                     </tr>

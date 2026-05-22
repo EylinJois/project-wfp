@@ -9,11 +9,11 @@ class ChatController extends Controller
 {
     public function index()
     {
-        $data = Chat::query()
-            ->orderByDesc('waktu_kirim')
+        $chats = Chat::query()
+            ->orderByDesc('delivered_at')
             ->get();
 
-        return view('chat', compact('data'));
+        return view('chat', compact('chats'));
     }
 
     public function create()
@@ -24,11 +24,11 @@ class ChatController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'pesan' => ['required', 'string', 'max:255'],
-            'member_id' => ['required', 'integer', 'exists:member,id'],
-            'dokter_id' => ['required', 'integer', 'exists:dokter,id'],
-            'konsultasi_id' => ['required', 'integer', 'exists:konsultasi,id'],
-            'waktu_kirim' => ['required', 'date'],
+            'chat' => ['required', 'string', 'max:255'],
+            'member_id' => ['required', 'integer', 'exists:members,id'],
+            'doctor' => ['required', 'integer', 'exists:doctors,id'],
+            'consultation' => ['required', 'integer', 'exists:consultations,id'],
+            'delivered_at' => ['required', 'date'],
         ]);
 
         Chat::create($validated);
@@ -38,22 +38,22 @@ class ChatController extends Controller
 
     public function show(Chat $chat)
     {
-        return response()->json(['data' => $chat]);
+        return response()->json(['chats' => $chat]);
     }
 
     public function edit(Chat $chat)
     {
-        return response()->json(['data' => $chat]);
+        return response()->json(['chats' => $chat]);
     }
 
     public function update(Request $request, Chat $chat)
     {
         $validated = $request->validate([
-            'pesan' => ['required', 'string', 'max:255'],
+            'chat' => ['required', 'string', 'max:255'],
             'member_id' => ['required', 'integer', 'exists:member,id'],
-            'dokter_id' => ['required', 'integer', 'exists:dokter,id'],
-            'konsultasi_id' => ['required', 'integer', 'exists:konsultasi,id'],
-            'waktu_kirim' => ['required', 'date'],
+            'doctor' => ['required', 'integer', 'exists:dokter,id'],
+            'consultation' => ['required', 'integer', 'exists:konsultasi,id'],
+            'delivered_at' => ['required', 'date'],
         ]);
 
         $chat->update($validated);

@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('artikel', function (Blueprint $table) {
+        Schema::create('members', function (Blueprint $table) {
             $table->id();
-            $table->string('judul', 255);
-            $table->date('tanggal');
-            $table->text('isi');
-            $table->string('foto', 255)->nullable();
-            $table->unsignedBigInteger('dokter_id');
-            $table->foreign('dokter_id')->references('id')->on('dokter');
-
             $table->timestamps();
+            $table->string('fullname', 100);
+            $table->date('birth_of_date');
+            $table->string('photo', 255);
+
         });
     }
 
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('artikel');
+        Schema::dropIfExists('members');
     }
 };
