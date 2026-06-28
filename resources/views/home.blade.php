@@ -51,7 +51,7 @@
                 Healthcare platform for online consultations and doctor appointments
             </p>
 
-            <a href="{{ route('doctor') }}" class="btn btn-primary btn-lg px-5 py-3 shadow">
+            <a href="{{ route('doctor.index') }}" class="btn btn-primary btn-lg px-5 py-3 shadow">
                 Our Services
             </a>
 

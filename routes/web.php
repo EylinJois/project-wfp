@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
             'index' => 'chat',
         ]);
         Route::resource('doctor', DoctorController::class)->names([
-            'index' => 'doctor',
+            'index' => 'doctor.index',
         ]);
         Route::resource('consultation', ConsultationController::class)->names([
             'index' => 'consultation',

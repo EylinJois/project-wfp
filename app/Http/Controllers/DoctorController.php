@@ -11,10 +11,12 @@ class DoctorController extends Controller
     public function index()
     {
         $doctors = Doctor::query()
+            ->with('specialty')
             ->orderBy('fullname')
             ->get();
+        $specialties = \App\Models\Specialty::all();
 
-        return view('doctor', compact('doctors'));
+        return view('doctors.index', compact('doctors', 'specialties'));
     }
 
     public function create()
@@ -24,6 +26,10 @@ class DoctorController extends Controller
 
     public function store(Request $request)
     {
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('public/photos');
+        }
         $validated = $request->validate([
             'fullname' => ['required', 'string', 'max:100'],
             'sip' => ['required', 'string', 'max:50', Rule::unique('doctors', 'sip')],
