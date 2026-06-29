@@ -80,7 +80,7 @@ class DoctorController extends Controller
 
     public function show(Doctor $doctor)
     {
-        return response()->json(['doctors' => $doctor]);
+        return view('doctors.show', compact('doctor'));
     }
 
     public function edit(Doctor $doctor)
@@ -88,51 +88,144 @@ class DoctorController extends Controller
         return response()->json(['doctors' => $doctor]);
     }
 
-    public function update(Request $request, Doctor $doctor)
+    public function editProfile()
     {
-        $validated = $request->validate([
-            'fullname' => ['required', 'string', 'max:100'],
-            'sip' => ['required', 'string', 'max:50', Rule::unique('doctors', 'sip')->ignore($doctor->id)],
-            'experience' => ['required', 'string', 'max:255'],
-            'photo' => ['nullable', 'string', 'max:255'],
-            'specialty_id' => ['required', 'integer', 'exists:specialties,id'],
-            'start_time' => ['required', 'date_format:H:i'],
-            'end_time' => ['required', 'date_format:H:i'],
-        ]);
+        $user = auth()->user();
+        $doctor = $user->doctor_id ? Doctor::find($user->doctor_id) : null;
 
-        $doctor->update($validated);
-
-        return redirect()->route('doctor.index', ['success' => 'Doctor updated successfully.']);
-    }
-
-    public function deleteData(Request $request)
-{
-    try {
-
-        $id = $request->id;
-
-        $doctor = Doctor::findOrFail($id);
-
-        if ($doctor->photo) {
-            Storage::delete('public/photos/' . $doctor->photo);
+        if (!$doctor) {
+            abort(403, 'Unauthorized action. You don\'t have access to this page!');
         }
 
-        $doctor->delete();
+        $specialties = \App\Models\Specialty::all();
+
+        return view('doctors.editProfile', compact('doctor', 'specialties'));
+    }
+
+    public function update(Request $request, Doctor $doctor) {}
+    public function updateProfile(Request $request)
+    {
+        $doctor = Doctor::findOrFail(auth()->user()->doctor_id);
+
+        $request->validate([
+            'fullname' => ['required', 'string', 'max:100'],
+            'sip' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('doctors', 'sip')->ignore($doctor->id)
+            ],
+            'experience' => ['required', 'string', 'max:255'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png'],
+            'specialty_id' => ['required', 'integer', 'exists:specialties,id'],
+            'start_time' => ['required'],
+            'end_time' => ['required'],
+        ]);
+
+        $doctor->fullname = $request->fullname;
+        $doctor->sip = $request->sip;
+        $doctor->experience = $request->experience;
+        $doctor->specialty_id = $request->specialty_id;
+        $doctor->start_time = $request->start_time;
+        $doctor->end_time = $request->end_time;
+
+        if ($request->hasFile('photo')) {
+
+            if ($doctor->photo) {
+                Storage::delete('public/photos/' . $doctor->photo);
+            }
+
+            $extension = $request->photo->extension();
+
+            $filename = 'd' . $doctor->id . '.' . $extension;
+
+            $request->photo->storeAs(
+                'public/photos',
+                $filename
+            );
+
+            $doctor->photo = $filename;
+        }
+
+        $doctor->save();
+
+        return redirect()
+            ->route('doctor.editProfile')
+            ->with('success', 'Your profile has been updated successfully.');
+    }
+
+    public function saveDataUpdate(Request $request)
+    {
+        $id = $request->id;
+
+        $data = Doctor::findOrFail($id);
+
+        $data->fullname = $request->fullname;
+        $data->sip = $request->sip;
+        $data->experience = $request->experience;
+        $data->specialty_id = $request->specialty_id;
+        $data->start_time = $request->start_time;
+        $data->end_time = $request->end_time;
+
+        if ($request->photo) {
+
+            // delete old photo
+            if ($data->photo) {
+                Storage::delete('public/photos/' . $data->photo);
+            }
+
+            $extension = $request->file('photo')->extension();
+
+            $filename = 'd' . $data->id . '.' . $extension;
+
+            // save new photo
+            $request->file('photo')->storeAs(
+                'public/photos',
+                $filename
+            );
+
+            // save filename to database
+            $data->photo = $filename;
+        }
+
+        $data->save();
 
         return response()->json([
             'status' => 'oke',
-            'msg' => 'Doctor data is removed!'
-        ]);
-
-    } catch (\Exception $e) {
-
-        return response()->json([
-            'error' => true,
-            'message' => $e->getMessage(),
-            'line' => $e->getLine(),
-        ], 500);
+            'msg' => 'doctor data is up-to-date !',
+            'specialty_name' => $data->specialty->name,
+            'photo' => $data->photo,
+            'photo_url' => asset('storage/photos/' . $data->photo),
+        ], 200);
     }
-}
+
+    public function deleteData(Request $request)
+    {
+        try {
+
+            $id = $request->id;
+
+            $doctor = Doctor::findOrFail($id);
+
+            if ($doctor->photo) {
+                Storage::delete('public/photos/' . $doctor->photo);
+            }
+
+            $doctor->delete();
+
+            return response()->json([
+                'status' => 'oke',
+                'msg' => 'Doctor data is removed!'
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+            ], 500);
+        }
+    }
 
     public function destroy(Doctor $doctor)
     {

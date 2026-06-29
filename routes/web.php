@@ -19,19 +19,21 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::middleware(['auth', 'role:member,admin'])->group(function () {
-        Route::resource('doctor', DoctorController::class)
-            ->names([
-                'index' => 'doctor.index',
-                'create' => 'doctor.create',
-                'store' => 'doctor.store',
-                'edit' => 'doctor.edit',
-                'getEditFormB' => 'doctor.getEditFormB',
-                'show' => 'doctor.show',
-                'update' => 'doctor.update',
-                'destroy' => 'doctor.destroy',
-            ]);
+    Route::get('/doctor', [DoctorController::class, 'index'])
+        ->name('doctor.index');
+    Route::get('/doctor/{doctor}', [DoctorController::class, 'show'])
+        ->name('doctor.show');
+
+    Route::middleware(['auth', 'role:doctor'])->group(function () {
+
+        Route::get('/doctor/editProfile', [DoctorController::class, 'editProfile'])
+            ->name('doctor.editProfile');
+
+        Route::put('/doctor/updateProfile/{doctor}', [DoctorController::class, 'updateProfile'])
+            ->name('doctor.updateProfile');
     });
+
+
 
     Route::middleware('role:member')->group(function () {
         // TODO: Isi routing untuk member.
@@ -40,15 +42,29 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:doctor')->group(function () {
         // TODO: Isi routing untuk dokter.
+
     });
 
     Route::middleware('role:admin')->group(function () {
-        // TODO: Isi routing untuk admin.
+
+
         Route::post('/doctor/getEditFormB', [DoctorController::class, 'getEditFormB'])
             ->name('doctor.getEditFormB');
-        Route::post('/doctor/deleteData', [DoctorController::class, 'deleteData'])->name('doctor.deleteData');
+        Route::post('/doctor/deleteData', [DoctorController::class, 'deleteData'])
+            ->name('doctor.deleteData');
+        Route::post('/doctor/saveDataUpdate', [DoctorController::class, 'saveDataUpdate'])
+            ->name('doctor.saveDataUpdate');
+        Route::get('/doctor/create', [DoctorController::class, 'create'])
+            ->name('doctor.create');
+        Route::post('/doctor/store', [DoctorController::class, 'store'])
+            ->name('doctor.store');
+        Route::get('/doctor/{doctor}/edit', [DoctorController::class, 'edit'])
+            ->name('doctor.edit');
+        Route::put('/doctor/{doctor}', [DoctorController::class, 'update'])
+            ->name('doctor.update');
+        Route::delete('/doctor/{doctor}', [DoctorController::class, 'destroy'])
+            ->name('doctor.destroy');
 
-        
         Route::get('article/db', [ArticleController::class, 'dbIndex'])->name('dbArticle');
 
         Route::resource('chat', ChatController::class)->names([

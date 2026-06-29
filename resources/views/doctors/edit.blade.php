@@ -9,7 +9,7 @@
     <label for="experience" class="form-label">Experience</label>
     <input class="form-control" type="text" id="experience" name="experience" value="{{ $data->experience }}">
     <label for="photo" class="form-label">Photo</label>
-    <input class="form-control" type="file" id="photo" name="photo">
+    <input class="form-control" type="file" accept="image/*" id="photo" name="photo">
     <label for="specialty_id" class="form-label">Specialty</label>
     <select class="form-control" id="specialty_id" name="specialty_id">
         @foreach ($specialty as $spec)

@@ -28,17 +28,15 @@
                         <th class="px-3 py-2">ID</th>
                         @endif
                         <th class="px-3 py-2">Full Name</th>
+                        @if (@Auth::user()->is_admin)
                         <th class="px-3 py-2">SIP</th>
                         <th class="px-3 py-2">Experience</th>
                         <th class="px-3 py-2">Photo</th>
-                        <th class="px-3 py-2">Specialization ID - Name</th>
+                        @endif
+                        <th class="px-3 py-2">Specialization</th>
                         <th class="px-3 py-2">Start Practice</th>
                         <th class="px-3 py-2">Selesai Praktik</th>
-                        @if (@Auth::user()->is_admin)
-                        <th class="px-3 py-2">Created At</th>
-                        <th class="px-3 py-2">Updated At</th>
                         <th class="px-3 py-2">Actions</th>
-                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -47,20 +45,23 @@
                         @if (@Auth::user()->is_admin)
                         <td class="px-3 py-2">{{ $doctor->id }}</td>
                         @endif
-                        <td class="px-3 py-2">{{ $doctor->fullname }}</td>
-                        <td class="px-3 py-2">{{ $doctor->sip }}</td>
-                        <td class="px-3 py-2">{{ $doctor->experience }}</td>
-                        <td class="px-3 py-2">
+                        <td class="px-3 py-2" id="td_name_{{ $doctor->id }}">{{ $doctor->fullname }}</td>
+                        @if (@Auth::user()->is_admin)
+                        <td class="px-3 py-2" id="td_sip_{{ $doctor->id }}">{{ $doctor->sip }}</td>
+                        <td class="px-3 py-2" id="td_experience_{{ $doctor->id }}">{{ $doctor->experience }}</td>
+                        <td class="px-3 py-2" id="td_photo_{{ $doctor->id }}">
                             <!-- {{ $doctor->photo }} -->
                             <img src="{{ asset('storage/photos/' . $doctor->photo) }}" width="100">
                         </td>
-                        <td class="px-3 py-2">{{ $doctor->specialty->id }} - {{ $doctor->specialty->name ?? 'N/A' }}</td>
-                        <td class="px-3 py-2">{{ $doctor->start_time }}</td>
-                        <td class="px-3 py-2">{{ $doctor->end_time }}</td>
-                        @if (@Auth::user()->is_admin)
-                        <td class="px-3 py-2">{{ $doctor->created_at }}</td>
-                        <td class="px-3 py-2">{{ $doctor->updated_at }}</td>
+                        @endif
+                        <td class="px-3 py-2" id="td_specialty_id_{{ $doctor->id }}">{{ $doctor->specialty->name ?? 'N/A' }}</td>
+                        <td class="px-3 py-2" id="td_start_time_{{ $doctor->id }}">{{ $doctor->start_time }}</td>
+                        <td class="px-3 py-2" id="td_end_time_{{ $doctor->id }}">{{ $doctor->end_time }}</td>
                         <td class="px-3 py-2">
+                            <a href="{{ route('doctor.show', $doctor->id) }}" class="btn btn-sm btn-info">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            @if (@Auth::user()->is_admin)
                             <a href="#modalEditB"
                                 class="btn btn-sm btn-warning"
                                 data-bs-toggle="modal"
@@ -74,8 +75,8 @@
                                 deleteDataRemove({{ $doctor->id }})">
                                 <i class="bi bi-trash"></i>
                             </button>
+                            @endif
                         </td>
-                        @endif
                     </tr>
                     @endforeach
                 </tbody>
@@ -156,10 +157,10 @@
 
 @push("scripts")
 <script>
-function getEditFormB(id) {
+    function getEditFormB(id) {
         $.ajax({
             type: 'POST',
-            url: '{{ route('doctor.getEditFormB') }}',
+            url: '{{ route("doctor.getEditFormB") }}',
             data: {
                 '_token': '<?php echo csrf_token(); ?>',
                 'id': id
@@ -170,10 +171,66 @@ function getEditFormB(id) {
         });
     }
 
+    function saveDataUpdate(id) {
+        var fullname = $('#fullname').val();
+        var sip = $('#sip').val();
+        var experience = $('#experience').val();
+        var photo = $('#photo')[0].files[0];
+        var specialty_id = $('#specialty_id').val();
+        var start_time = $('#start_time').val();
+        var end_time = $('#end_time').val();
+
+        let formData = new FormData();
+
+        formData.append('_token', '{{ csrf_token() }}');
+        formData.append('id', id);
+        formData.append('fullname', fullname);
+        formData.append('sip', sip);
+        formData.append('experience', experience);
+        formData.append('specialty_id', specialty_id);
+        formData.append('start_time', start_time);
+        formData.append('end_time', end_time);
+
+        // append photo only if selected
+        if (photo) {
+            formData.append('photo', photo);
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '{{ route("doctor.saveDataUpdate") }}',
+            data: formData,
+
+            processData: false, // important
+            contentType: false, // important
+
+            success: function(data) {
+                if (data.status == "oke") {
+
+                    $('#td_name_' + id).html(fullname);
+                    $('#td_sip_' + id).html(sip);
+                    $('#td_experience_' + id).html(experience);
+                    $('#td_specialty_id_' + id).html(data.specialty_name);
+                    $('#td_photo_' + id).html(
+                        '<img src="' + data.photo_url + '" width="100">'
+                    );
+                    $('#td_start_time_' + id).html(start_time);
+                    $('#td_end_time_' + id).html(end_time);
+
+                    $('#modalEditB').modal('hide');
+                }
+            },
+
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    }
+
     function deleteDataRemove(id) {
         $.ajax({
             type: 'POST',
-            url: '{{ route('doctor.deleteData') }}',
+            url: '{{ route("doctor.deleteData") }}',
             data: {
                 '_token': '<?php echo csrf_token(); ?>',
                 'id': id
