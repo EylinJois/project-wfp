@@ -42,7 +42,7 @@
 </head>
 <!--end::Head-->
 <!--begin::Body-->
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
@@ -275,6 +275,7 @@
         <main class="app-main">
             @yield('content')
             @stack('modals')
+            @stack('scripts')
         </main>
     </div>
     <!--end::App Wrapper-->

@@ -19,8 +19,23 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
+    Route::middleware(['auth', 'role:member,admin'])->group(function () {
+        Route::resource('doctor', DoctorController::class)
+            ->names([
+                'index' => 'doctor.index',
+                'create' => 'doctor.create',
+                'store' => 'doctor.store',
+                'edit' => 'doctor.edit',
+                'getEditFormB' => 'doctor.getEditFormB',
+                'show' => 'doctor.show',
+                'update' => 'doctor.update',
+                'destroy' => 'doctor.destroy',
+            ]);
+    });
+
     Route::middleware('role:member')->group(function () {
         // TODO: Isi routing untuk member.
+
     });
 
     Route::middleware('role:doctor')->group(function () {
@@ -29,13 +44,15 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:admin')->group(function () {
         // TODO: Isi routing untuk admin.
+        Route::post('/doctor/getEditFormB', [DoctorController::class, 'getEditFormB'])
+            ->name('doctor.getEditFormB');
+        Route::post('/doctor/deleteData', [DoctorController::class, 'deleteData'])->name('doctor.deleteData');
+
+        
         Route::get('article/db', [ArticleController::class, 'dbIndex'])->name('dbArticle');
 
         Route::resource('chat', ChatController::class)->names([
             'index' => 'chat',
-        ]);
-        Route::resource('doctor', DoctorController::class)->names([
-            'index' => 'doctor.index',
         ]);
         Route::resource('consultation', ConsultationController::class)->names([
             'index' => 'consultation',

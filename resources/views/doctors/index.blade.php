@@ -13,16 +13,20 @@
     </div>
     @endif
 
+    @if (@Auth::user()->is_admin)
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#btnFormModal">
         + New Doctor
     </button>
+    @endif
 
     <div class="card p-3">
         <div class="table-responsive">
             <table class="table table-bordered table-striped mb-0">
                 <thead class="table-light">
                     <tr>
+                        @if (@Auth::user()->is_admin)
                         <th class="px-3 py-2">ID</th>
+                        @endif
                         <th class="px-3 py-2">Full Name</th>
                         <th class="px-3 py-2">SIP</th>
                         <th class="px-3 py-2">Experience</th>
@@ -30,36 +34,48 @@
                         <th class="px-3 py-2">Specialization ID - Name</th>
                         <th class="px-3 py-2">Start Practice</th>
                         <th class="px-3 py-2">Selesai Praktik</th>
+                        @if (@Auth::user()->is_admin)
                         <th class="px-3 py-2">Created At</th>
                         <th class="px-3 py-2">Updated At</th>
                         <th class="px-3 py-2">Actions</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($doctors as $doctor)
-                    <tr>
+                    <tr id="tr_{{ $doctor->id }}">
+                        @if (@Auth::user()->is_admin)
                         <td class="px-3 py-2">{{ $doctor->id }}</td>
+                        @endif
                         <td class="px-3 py-2">{{ $doctor->fullname }}</td>
                         <td class="px-3 py-2">{{ $doctor->sip }}</td>
                         <td class="px-3 py-2">{{ $doctor->experience }}</td>
-                        <td class="px-3 py-2">{{ $doctor->photo }}</td>
+                        <td class="px-3 py-2">
+                            <!-- {{ $doctor->photo }} -->
+                            <img src="{{ asset('storage/photos/' . $doctor->photo) }}" width="100">
+                        </td>
                         <td class="px-3 py-2">{{ $doctor->specialty->id }} - {{ $doctor->specialty->name ?? 'N/A' }}</td>
                         <td class="px-3 py-2">{{ $doctor->start_time }}</td>
                         <td class="px-3 py-2">{{ $doctor->end_time }}</td>
+                        @if (@Auth::user()->is_admin)
                         <td class="px-3 py-2">{{ $doctor->created_at }}</td>
                         <td class="px-3 py-2">{{ $doctor->updated_at }}</td>
                         <td class="px-3 py-2">
-                            <a href="{{ route('doctor.edit', $doctor->id) }}" class="btn btn-sm btn-warning mb-1">
-                                <i class="fas fa-edit"></i> Edit
+                            <a href="#modalEditB"
+                                class="btn btn-sm btn-warning"
+                                data-bs-toggle="modal"
+                                onclick="getEditFormB({{ $doctor->id }})">
+                                <i class="bi bi-pencil"></i>
                             </a>
-                            <form action="{{ route('doctor.destroy', $doctor->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger mb-1"
-                                    onclick="return confirm('Are you sure you want to delete this doctor?')">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </form>
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-danger"
+                                onclick="if(confirm('Are you sure to delete {{ $doctor->id }} - {{ $doctor->fullname }} ?')) 
+                                deleteDataRemove({{ $doctor->id }})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>
@@ -99,7 +115,7 @@
                         <select class="form-control" id="specialty_id" name="specialty_id" required>
                             <option value="">Select Specialty</option>
                             @foreach($specialties as $specialty)
-                                <option value="{{ $specialty->id }}">{{ $specialty->name }}</option>
+                            <option value="{{ $specialty->id }}">{{ $specialty->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -122,4 +138,53 @@
 </div>
 @endpush
 
+<div class="modal fade" id="modalEditB" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Doctor's Data</h4>
+            </div>
+            <div class="modal-body" id="modalContentB">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push("scripts")
+<script>
+function getEditFormB(id) {
+        $.ajax({
+            type: 'POST',
+            url: '{{ route('doctor.getEditFormB') }}',
+            data: {
+                '_token': '<?php echo csrf_token(); ?>',
+                'id': id
+            },
+            success: function(data) {
+                $('#modalContentB').html(data.msg)
+            }
+        });
+    }
+
+    function deleteDataRemove(id) {
+        $.ajax({
+            type: 'POST',
+            url: '{{ route('doctor.deleteData') }}',
+            data: {
+                '_token': '<?php echo csrf_token(); ?>',
+                'id': id
+            },
+            success: function(data) {
+                if (data.status == "oke") {
+                    $('#tr_' + id).remove();
+                }
+            }
+        });
+    }
+</script>
+@endpush
 @endsection
