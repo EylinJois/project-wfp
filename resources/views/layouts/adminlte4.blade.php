@@ -174,7 +174,7 @@
                         <!-- TODO: Ganti route untuk appointment -->
                         @if (!is_null(Auth::user()->member_id) || !is_null(Auth::user()->doctor_id))
                         <li class="nav-item">
-                            <a href={{ route('home') }} class="nav-link @yield('menu-consultation')">
+                            <a href={{ route('consultation.index') }} class="nav-link @yield('menu-consultation')">
                                 <i class="nav-icon fa-regular fa-handshake"></i>
                                 <p>Consultation</p>
                             </a>

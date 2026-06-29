@@ -19,6 +19,12 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('/consultation/indexConsultation', [ConsultationController::class, 'indexConsultation'])
+        ->name('consultation.index');
+Route::get('/booking/{doctor}/schedule', [ConsultationController::class, 'showSchedule'])
+    ->name('booking.showSchedule');
+    Route::post('/consultation/store', [ConsultationController::class, 'store'])
+        ->name('booking.store');
     Route::get('/doctor', [DoctorController::class, 'index'])
         ->name('doctor.index');
     Route::get('/doctor/{doctor}', [DoctorController::class, 'show'])
