@@ -21,25 +21,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/consultation/indexConsultation', [ConsultationController::class, 'indexConsultation'])
         ->name('consultation.index');
-Route::get('/booking/{doctor}/schedule', [ConsultationController::class, 'showSchedule'])
+    Route::get('/booking/{doctor}/schedule', [ConsultationController::class, 'showSchedule'])
     ->name('booking.showSchedule');
     Route::post('/consultation/store', [ConsultationController::class, 'store'])
         ->name('booking.store');
     Route::get('/doctor', [DoctorController::class, 'index'])
         ->name('doctor.index');
-    Route::get('/doctor/{doctor}', [DoctorController::class, 'show'])
-        ->name('doctor.show');
-
-    Route::middleware(['auth', 'role:doctor'])->group(function () {
-
-        Route::get('/doctor/editProfile', [DoctorController::class, 'editProfile'])
-            ->name('doctor.editProfile');
-
-        Route::put('/doctor/updateProfile/{doctor}', [DoctorController::class, 'updateProfile'])
-            ->name('doctor.updateProfile');
-    });
-
-
 
     Route::middleware('role:member')->group(function () {
         // TODO: Isi routing untuk member.
@@ -48,8 +35,16 @@ Route::get('/booking/{doctor}/schedule', [ConsultationController::class, 'showSc
 
     Route::middleware('role:doctor')->group(function () {
         // TODO: Isi routing untuk dokter.
+        Route::get('/doctor/editProfile', [DoctorController::class, 'editProfile'])
+            ->name('doctor.editProfile');
+        Route::put('/doctor/updateProfile/{doctor}', [DoctorController::class, 'updateProfile'])
+            ->name('doctor.updateProfile');
 
     });
+
+    
+    Route::get('/doctor/{doctor}', [DoctorController::class, 'show'])
+        ->name('doctor.show');
 
     Route::middleware('role:admin')->group(function () {
 

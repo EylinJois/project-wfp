@@ -204,7 +204,7 @@
                         @if (Auth::user()->is_admin)
                         <li class="nav-item">
                             <a href={{ route('doctor.index') }} class="nav-link @yield('menu-doctors')">
-                                <i class="nav-icon fa-solid fa-user-gear"></i>
+                                <i class="nav-icon fa-solid fa-user-doctor"></i>
                                 <p>Doctors</p>
                             </a>
                         </li>

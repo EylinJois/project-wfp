@@ -220,12 +220,14 @@
                                 </div>
 
                                 <!-- SUBMIT -->
+                                @if(Auth::user()->member_id)
                                 <button type="submit"
                                     class="btn btn-success">
 
                                     Confirm Booking
 
                                 </button>
+                                @endif
 
                             </form>
 
