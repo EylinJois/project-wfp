@@ -87,14 +87,11 @@
                             <!--begin::Menu Footer-->
                             <li class="user-footer d-flex justify-content-between align-items-center px-3 py-2">
                                 @if (!is_null(Auth::user()->doctor_id))
-                                <a href="{{ route('doctor.editProfile') }}"
-                                    class="btn btn-primary btn-sm">
-                                    Edit Profile
-                                </a>
+                                    <a href="{{ route('doctor.editProfile') }}" class="btn btn-primary btn-sm">
+                                        Edit Profile
+                                    </a>
                                 @endif
-                                <button type="button"
-                                    class="btn btn-danger btn-sm"
-                                    data-bs-toggle="modal"
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#signoutModal">
                                     Sign out
                                 </button>
@@ -143,136 +140,155 @@
 
                         <!-- TODO: Ganti route untuk dashboard -->
                         @if (Auth::user()->is_admin)
-                        <li class="nav-item">
-                            <a href={{ route('home') }} class="nav-link @yield('dashboard')">
-                                <i class="nav-icon bi bi-speedometer"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a href={{ route('home') }} class="nav-link @yield('dashboard')">
+                                    <i class="nav-icon bi bi-speedometer"></i>
+                                    <p>Dashboard</p>
+                                </a>
+                            </li>
                         @endif
 
                         <!-- TODO: Ganti route untuk dokter -->
                         @if (!is_null(Auth::user()->member_id) || !is_null(Auth::user()->doctor_id))
-                        <li class="nav-item">
-                            <a href={{ route('doctor.index') }} class="nav-link @yield('menu-doctors')">
-                                <i class="nav-icon fa-solid fa-user-doctor"></i>
-                                <p>Doctor</p>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a href={{ route('doctor.index') }} class="nav-link @yield('menu-doctors')">
+                                    <i class="nav-icon fa-solid fa-user-doctor"></i>
+                                    <p>Doctor</p>
+                                </a>
+                            </li>
                         @endif
 
                         <!-- TODO: Ganti route untuk article -->
                         @if (!is_null(Auth::user()->member_id) || !is_null(Auth::user()->doctor_id))
-                        <li class="nav-item">
-                            <a href={{ route('article.index') }} class="nav-link @yield('menu-article')">
-                                <i class="nav-icon fa-regular fa-newspaper"></i>
-                                <p>Article</p>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a href={{ route('article.index') }} class="nav-link @yield('menu-article')">
+                                    <i class="nav-icon fa-regular fa-newspaper"></i>
+                                    <p>Article</p>
+                                </a>
+                            </li>
                         @endif
+                        @if (Auth::user()->member_id)
+                            <li class="nav-item">
 
+                                <a href="{{ route('member.history') }}" class="nav-link">
+
+                                    <i class="nav-icon bi bi-clock-history"></i>
+
+                                    <p>History</p>
+
+                                </a>
+
+                            </li>
+                        @endif
                         <!-- TODO: Ganti route untuk appointment -->
-                        @if (!is_null(Auth::user()->member_id) || !is_null(Auth::user()->doctor_id))
-                        <li class="nav-item">
-                            <a href={{ route('consultation.index') }} class="nav-link @yield('menu-consultation')">
-                                <i class="nav-icon fa-regular fa-handshake"></i>
+                        @if (Auth::user()->doctor_id)
+                            <a href="{{ route('doctor.consultations') }}" class="nav-link">
                                 <p>Consultation</p>
                             </a>
-                        </li>
+                        @elseif(Auth::user()->member_id)
+                            <a href="{{ route('consultation.index') }}" class="nav-link">
+                                <p>Consultation</p>
+                            </a>
                         @endif
 
                         <!-- TODO: Ganti route untuk schedule -->
-                        @if (!is_null(Auth::user()->doctor_id))
-                        <li class="nav-item">
-                            <a href={{ route('home') }} class="nav-link @yield('menu-schedule')">
-                                <i class="nav-icon fa-regular fa-calendar"></i>
-                                <p>My Schedule</p>
-                            </a>
-                        </li>
+                        @if (Auth::user()->doctor_id)
+                            <li class="nav-item">
+
+                                <a href="{{ route('doctor.schedule') }}" class="nav-link @yield('menu-schedule')">
+
+                                    <i class="nav-icon fa-regular fa-calendar"></i>
+
+                                    <p>Schedule</p>
+
+                                </a>
+
+                            </li>
                         @endif
 
                         <!-- TODO: Ganti route untuk manage user -->
                         @if (Auth::user()->is_admin)
-                        <li class="nav-item">
-                            <a href={{ route('home') }} class="nav-link @yield('menu-manage-user')">
-                                <i class="nav-icon fa-solid fa-user-gear"></i>
-                                <p>Manage User</p>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a href={{ route('home') }} class="nav-link @yield('menu-manage-user')">
+                                    <i class="nav-icon fa-solid fa-user-gear"></i>
+                                    <p>Manage User</p>
+                                </a>
+                            </li>
                         @endif
 
                         @if (Auth::user()->is_admin)
-                        <li class="nav-item">
-                            <a href={{ route('doctor.index') }} class="nav-link @yield('menu-doctors')">
-                                <i class="nav-icon fa-solid fa-user-doctor"></i>
-                                <p>Doctors</p>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a href={{ route('doctor.index') }} class="nav-link @yield('menu-doctors')">
+                                    <i class="nav-icon fa-solid fa-user-doctor"></i>
+                                    <p>Doctors</p>
+                                </a>
+                            </li>
                         @endif
 
                         <!-- TODO: Ganti route untuk menampilkan setiap tabel -->
                         @if (Auth::user()->is_admin)
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-table"></i>
-                                <p>
-                                    Database
-                                    <i class="nav-arrow bi bi-chevron-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon bi bi-table"></i>
+                                    <p>
+                                        Database
+                                        <i class="nav-arrow bi bi-chevron-right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
 
-                                <li class="nav-item">
-                                    <a href={{ route('user') }} class="nav-link @yield('menu')">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>User</p>
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href={{ route('user') }} class="nav-link @yield('menu')">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>User</p>
+                                        </a>
+                                    </li>
 
-                                <li class="nav-item">
-                                    <a href={{ route('doctor.index') }} class="nav-link @yield('menu')">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Doctor</p>
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href={{ route('doctor.index') }} class="nav-link @yield('menu')">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Doctor</p>
+                                        </a>
+                                    </li>
 
-                                <li class="nav-item">
-                                    <a href={{ route('member') }} class="nav-link @yield('menu')">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Member</p>
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href={{ route('member') }} class="nav-link @yield('menu')">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Member</p>
+                                        </a>
+                                    </li>
 
-                                <li class="nav-item">
-                                    <a href={{ route('specialty') }} class="nav-link @yield('menu')">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Specialty</p>
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href={{ route('specialty') }} class="nav-link @yield('menu')">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Specialty</p>
+                                        </a>
+                                    </li>
 
-                                <li class="nav-item">
+                                    {{-- <li class="nav-item">
                                     <a href={{ route('chat') }} class="nav-link @yield('menu')">
                                         <i class="nav-icon bi bi-circle"></i>
                                         <p>Chat</p>
                                     </a>
-                                </li>
+                                </li> --}}
 
-                                <li class="nav-item">
-                                    <a href={{ route('dbArticle') }} class="nav-link @yield('menu')">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Article</p>
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href={{ route('dbArticle') }} class="nav-link @yield('menu')">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Article</p>
+                                        </a>
+                                    </li>
 
-                                <li class="nav-item">
-                                    <a href={{ route('consultation') }} class="nav-link @yield('menu')">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Consulation</p>
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href={{ route('admin.consultation.index') }}
+                                            class="nav-link @yield('menu')">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Consulation</p>
+                                        </a>
+                                    </li>
 
-                            </ul>
-                        </li>
+                                </ul>
+                            </li>
                         @endif
                     </ul>
                     <!--end::Sidebar Menu-->

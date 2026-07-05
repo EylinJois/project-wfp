@@ -16,10 +16,10 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-
     protected $primaryKey = 'username';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -29,7 +29,7 @@ class User extends Authenticatable
         'nomor_telepon',
         'is_admin',
         'member_id',
-        'doctor_id'
+        'doctor_id',
     ];
 
     /**
@@ -50,4 +50,21 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getRoleAttribute()
+    {
+        if ($this->is_admin) {
+            return 'admin';
+        }
+
+        if ($this->doctor_id) {
+            return 'doctor';
+        }
+
+        if ($this->member_id) {
+            return 'member';
+        }
+
+        return null;
+    }
 }

@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Consultation extends Model
 {
     use HasFactory;
-    protected $fillable =[
+
+    protected $fillable = [
         'member_id',
         'doctor_id',
         'consultation_type',
@@ -16,4 +17,19 @@ class Consultation extends Model
         'time',
         'status',
     ];
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
+
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class);
+    }
+
+    public function chats()
+    {
+        return $this->hasMany(Chat::class);
+    }
 }

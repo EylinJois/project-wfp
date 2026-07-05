@@ -5,14 +5,10 @@
 
 @section('content')
 
-
-<div class="content-wrapper">
-
-
     @if (session('success'))
-    <div class="alert alert-success alert-dismissible fade show">
-        {{ session('success') }}
-    </div>
+        <div class="alert alert-success alert-dismissible fade show">
+            {{ session('success') }}
+        </div>
     @endif
 
     <section class="content-header">
@@ -31,6 +27,41 @@
 
     <section class="content">
         <div class="container-fluid">
+            @if (!empty($activeConsultation))
+                <div class="alert alert-info">
+
+                    <h4>
+
+                        Upcoming Consultation
+
+                    </h4>
+
+                    Doctor :
+
+                    {{ $activeConsultation->doctor->fullname }}
+
+                    <br>
+
+                    Time :
+
+                    {{ $activeConsultation->time }}
+
+                    <br>
+
+                    Status :
+
+                    {{ ucfirst($activeConsultation->status) }}
+
+                    <br><br>
+
+                    <a href="{{ route('consultation.show', $activeConsultation->id) }}" class="btn btn-success">
+
+                        Join Consultation
+
+                    </a>
+
+                </div>
+            @endif
             <div class="row">
 
                 <!-- LEFT SIDE : DOCTOR LIST -->
@@ -46,43 +77,41 @@
 
                         <div class="card-body">
 
-                            @foreach($doctors as $doctorItem)
+                            @foreach ($doctors as $doctorItem)
+                                <div class="card mb-3 shadow-sm">
 
-                            <div class="card mb-3 shadow-sm">
+                                    <div class="card-body">
 
-                                <div class="card-body">
+                                        <div class="d-flex align-items-center">
 
-                                    <div class="d-flex align-items-center">
+                                            <img src="{{ asset('storage/photos/' . $doctorItem->photo) }}"
+                                                class="rounded-circle shadow"
+                                                style="width:70px;height:70px;object-fit:cover;">
 
-                                        <img src="{{ asset('storage/photos/' . $doctorItem->photo) }}"
-                                            class="rounded-circle shadow"
-                                            style="width:70px;height:70px;object-fit:cover;">
+                                            <div class="ms-3">
 
-                                        <div class="ms-3">
+                                                <h5 class="mb-1">
+                                                    {{ $doctorItem->fullname }}
+                                                </h5>
 
-                                            <h5 class="mb-1">
-                                                {{ $doctorItem->fullname }}
-                                            </h5>
+                                                <p class="text-muted mb-2">
+                                                    {{ $doctorItem->specialty->name ?? 'N/A' }}
+                                                </p>
 
-                                            <p class="text-muted mb-2">
-                                                {{ $doctorItem->specialty->name ?? 'N/A' }}
-                                            </p>
+                                                <a href="{{ route('booking.showSchedule', $doctorItem->id) }}"
+                                                    class="btn btn-primary btn-sm">
 
-                                            <a href="{{ route('booking.showSchedule', $doctorItem->id) }}"
-                                                class="btn btn-primary btn-sm">
+                                                    Select
 
-                                                Select
+                                                </a>
 
-                                            </a>
+                                            </div>
 
                                         </div>
 
                                     </div>
 
                                 </div>
-
-                            </div>
-
                             @endforeach
 
                         </div>
@@ -104,140 +133,138 @@
 
                         <div class="card-body">
 
-                            @if(isset($doctor))
+                            @if (isset($doctor))
+                                @if ($activeConsultation)
 
-                            <!-- DOCTOR INFO -->
-                            <div class="d-flex align-items-center mb-4">
+                                    <div class="alert alert-warning">
 
-                                <img src="{{ asset('storage/photos/' . $doctor->photo) }}"
-                                    class="rounded-circle shadow"
-                                    style="width:90px;height:90px;object-fit:cover;">
+                                        You already have an active consultation.
 
-                                <div class="ms-3">
+                                        Please finish it before booking another consultation.
 
-                                    <h3 class="mb-1">
-                                        {{ $doctor->fullname }}
-                                    </h3>
+                                    </div>
+                                @else
+                                    <!-- DOCTOR INFO -->
+                                    <div class="d-flex align-items-center mb-4">
 
-                                    <p class="text-muted mb-1">
-                                        {{ $doctor->specialty->name ?? 'N/A' }}
-                                    </p>
+                                        <img src="{{ asset('storage/photos/' . $doctor->photo) }}"
+                                            class="rounded-circle shadow" style="width:90px;height:90px;object-fit:cover;">
 
-                                    <span class="badge bg-info">
-                                        {{ $doctor->start_time }}
-                                        -
-                                        {{ $doctor->end_time }}
-                                    </span>
+                                        <div class="ms-3">
 
-                                </div>
+                                            <h3 class="mb-1">
+                                                {{ $doctor->fullname }}
+                                            </h3>
 
-                            </div>
+                                            <p class="text-muted mb-1">
+                                                {{ $doctor->specialty->name ?? 'N/A' }}
+                                            </p>
 
-
-
-                            <!-- BOOKING FORM -->
-                            <form action="{{ route('booking.store') }}"
-                                method="POST">
-
-                                @csrf
-
-                                <!-- doctor -->
-                                <input type="hidden"
-                                    name="doctor_id"
-                                    value="{{ $doctor->id }}">
-
-                                <!-- member -->
-                                <input type="hidden"
-                                    name="member_id"
-                                    value="{{ Auth::user()->member_id }}">
-
-                                <!-- status -->
-                                <input type="hidden"
-                                    name="status"
-                                    value="pending">
-
-                                <!-- consultation type -->
-                                <input type="hidden"
-                                    name="consultation_type"
-                                    value="none">
-
-                                <!-- DATE -->
-                                <div class="form-group mb-4">
-
-                                    <label>
-                                        Consultation Date
-                                    </label>
-
-                                    <input type="date"
-                                        id="consultation_date"
-                                        name="consultation_date"
-                                        class="form-control"
-                                        value="{{ $selectedDate }}">
-
-                                </div>
-
-                                <!-- AVAILABLE SCHEDULE -->
-                                <div class="mb-4">
-
-                                    <label class="mb-3">
-                                        Available Schedule
-                                    </label>
-
-                                    <div class="d-flex flex-wrap gap-2">
-
-                                        @forelse($availableSchedules as $schedule)
-
-                                        <div class="form-check">
-
-                                            <input class="btn-check consultation-radio"
-                                                type="radio"
-                                                value="{{ $schedule }}"
-                                                name="schedule_radio"
-                                                id="schedule_{{ $schedule }}"
-                                                required>
-
-                                            <label class="btn btn-outline-success"
-                                                for="schedule_{{ $schedule }}">
-
-                                                {{ $schedule }}
-
-                                            </label>
+                                            <span class="badge bg-info">
+                                                {{ $doctor->start_time }}
+                                                -
+                                                {{ $doctor->end_time }}
+                                            </span>
 
                                         </div>
-
-                                        @empty
-
-                                        <div class="alert alert-danger w-100">
-
-                                            No available schedule.
-
-                                        </div>
-
-                                        @endforelse
 
                                     </div>
 
-                                </div>
 
-                                <!-- SUBMIT -->
-                                @if(Auth::user()->member_id)
-                                <button type="submit"
-                                    class="btn btn-success">
 
-                                    Confirm Booking
+                                    <!-- BOOKING FORM -->
+                                    <form action="{{ route('booking.store') }}" method="POST">
 
-                                </button>
+                                        @csrf
+
+                                        <!-- doctor -->
+                                        <input type="hidden" name="doctor_id" value="{{ $doctor->id }}">
+
+                                        <!-- member -->
+                                        <input type="hidden" name="member_id" value="{{ Auth::user()->member_id }}">
+
+                                        <!-- status -->
+                                        <input type="hidden" name="status" value="pending">
+
+                                        <!-- consultation type -->
+                                        <input type="hidden" name="consultation_type" value="none">
+
+                                        <!-- DATE -->
+                                        <div class="form-group mb-4">
+
+                                            <label>
+                                                Consultation Date
+                                            </label>
+
+                                            <input type="date" id="consultation_date" name="consultation_date"
+                                                class="form-control" value="{{ $selectedDate }}"
+                                                onchange="
+window.location='{{ route('booking.showSchedule', $doctor->id) }}?date='+this.value
+">
+
+                                        </div>
+
+                                        <!-- AVAILABLE SCHEDULE -->
+                                        <div class="mb-4">
+
+                                            <label class="mb-3">
+                                                Available Schedule
+                                            </label>
+
+                                            <div class="d-flex flex-wrap gap-2">
+
+                                                @forelse($availableSchedules as $schedule)
+                                                    <div class="form-check">
+
+                                                        <input class="btn-check consultation-radio" type="radio"
+                                                            value="{{ $schedule }}" name="schedule_radio"
+                                                            id="schedule_{{ $schedule }}" required>
+
+                                                        <label class="btn btn-outline-success"
+                                                            for="schedule_{{ $schedule }}">
+
+                                                            {{ $schedule }}
+
+                                                        </label>
+
+                                                    </div>
+
+                                                @empty
+
+                                                    <div class="alert alert-danger w-100">
+
+                                                        No available schedule.
+
+                                                    </div>
+                                                @endforelse
+
+                                            </div>
+
+                                        </div>
+
+                                        <!-- SUBMIT -->
+                                        @if ($activeConsultation)
+                                            <button class="btn btn-secondary" disabled>
+
+                                                You already have an active consultation
+
+                                            </button>
+                                        @else
+                                            <button type="submit" class="btn btn-success">
+
+                                                Confirm Booking
+
+                                            </button>
+                                        @endif
+
+                                    </form>
                                 @endif
-
-                            </form>
-
                             @else
+                                <div class="alert alert-info">
 
-                            <div class="alert alert-info">
+                                    Please select a doctor from the left panel.
 
-                                Please select a doctor from the left panel.
-
-                            </div>
+                                </div>
 
                             @endif
 
@@ -251,36 +278,4 @@
 
         </div>
     </section>
-
-</div>
-
-@section('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-
-        const radios = document.querySelectorAll('.consultation-radio');
-        const hiddenTime = document.getElementById('selected_time');
-        const dateInput = document.getElementById('consultation_date');
-
-        radios.forEach(function(radio) {
-
-            radio.addEventListener('change', function() {
-
-                const selectedDate = dateInput.value;
-                const selectedSchedule = this.value;
-
-                hiddenTime.value =
-                    selectedDate + ' ' + selectedSchedule;
-
-                console.log(hiddenTime.value);
-
-            });
-
-        });
-
-    });
-</script>
-@endsection
-
-
 @endsection

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Consultation;
+use App\Models\Doctor;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Carbon\Carbon;
-use App\Models\Doctor;
 
 class ConsultationController extends Controller
 {
@@ -55,32 +55,141 @@ class ConsultationController extends Controller
             $allSchedules,
             $bookedSchedules
         );
+        $activeConsultation = Consultation::where(
+            'member_id',
+            auth()->user()->member_id
+        )
+            ->whereIn('status', ['pending', 'ongoing'])
+            ->latest('time')
+            ->first();
 
         return view('members.consultation', compact(
             'doctor',
             'doctors',
             'availableSchedules',
-            'selectedDate'
+            'selectedDate',
+            'activeConsultation'
         ));
     }
 
+    // show consultation for member
     public function indexConsultation()
     {
         $doctors = Doctor::with('specialty')->get();
 
-        $consultations = Consultation::query()
+        $consultation = Consultation::where('member_id', auth()->user()->member_id)
+            ->whereIn('status', ['pending', 'ongoing'])
+            ->latest()
+            ->first();
+
+        return view(
+            'members.consultation',
+            compact('consultation', 'doctors')
+        );
+    }
+
+    // show consultation history for member
+    public function history()
+    {
+        $consultations = Consultation::with([
+            'doctor',
+            'chats',
+        ])
+            ->where('member_id', auth()->user()->member_id)
+            ->where('status', 'done')
+            ->latest('time')
+            ->get();
+
+        $consultations->each(function ($consultation) {
+            $consultation->formatted_date = date('d M Y', strtotime($consultation->time));
+            $consultation->formatted_time = date('H:i', strtotime($consultation->time));
+        });
+
+        return view(
+            'members.history',
+            compact('consultations')
+        );
+    }
+
+    public function historyDetail(Consultation $consultation)
+    {
+        abort_if(
+            $consultation->member_id != auth()->user()->member_id,
+            403
+        );
+
+        $consultation->load([
+            'doctor',
+            'member',
+            'chats',
+        ]);
+
+        return view(
+            'members.history-detail',
+            compact('consultation')
+        );
+    }
+
+    // show consultation for doctor
+    public function doctorConsultations()
+    {
+        $query = Consultation::with([
+            'member',
+            'doctor',
+        ])
+            ->where('doctor_id', auth()->user()->doctor_id);
+
+        if (request()->filled('status') && request('status') != 'all') {
+            $query->where('status', request('status'));
+        }
+
+        $consultations = $query
             ->orderByDesc('time')
             ->get();
 
-        return view('members.consultation', [
-            'doctors' => $doctors,
-            'consultations' => $consultations,
-            'doctor' => null,
-            'availableSchedules' => [],
-            'selectedDate' => now()->toDateString(),
-        ]);
+        return view(
+            'doctors.consultation',
+            compact('consultations')
+        );
     }
 
+    // show schedule for doctor
+    public function schedule()
+    {
+        $doctor = auth()->user()->doctor_id;
+
+        $consultations = Consultation::with('member')
+            ->where('doctor_id', $doctor)
+            ->orderBy('time')
+            ->get();
+
+        return view(
+            'doctors.schedule',
+            compact('consultations')
+        );
+    }
+
+    // start consultation for doctor
+    public function start(Consultation $consultation)
+    {
+        $consultation->update([
+            'status' => 'ongoing',
+            'consultation_type' => 'ongoing',
+        ]);
+
+        return back()->with('success', 'Consultation started.');
+    }
+
+    // finish consultation for doctor
+    public function finish(Consultation $consultation)
+    {
+        $consultation->update([
+            'status' => 'done',
+            'consultation_type' => 'done',
+        ]);
+
+        return back()->with('success', 'Consultation finished.');
+    }
 
     public function create()
     {
@@ -91,7 +200,7 @@ class ConsultationController extends Controller
     {
         try {
             $request->merge([
-                'time' => $request->consultation_date . ' ' . $request->schedule_radio
+                'time' => $request->consultation_date.' '.$request->schedule_radio,
             ]);
             $validated = $request->validate([
                 'time' => ['required'],
@@ -104,7 +213,9 @@ class ConsultationController extends Controller
 
             Consultation::create($validated);
 
-            return redirect()->route('consultation.index', ['success' => 'Consultation booked successfully.']);
+            return redirect()
+                ->route('consultation.index')
+                ->with('success', 'Consultation booked successfully.');
         } catch (\Exception $e) {
 
             return response()->json([
@@ -115,9 +226,30 @@ class ConsultationController extends Controller
         }
     }
 
+    // check if the user is the doctor or member of the consultation
     public function show(Consultation $consultation)
     {
-        return response()->json(['consultation' => $consultation]);
+        if (auth()->user()->doctor_id &&
+            $consultation->doctor_id != auth()->user()->doctor_id) {
+            abort(403);
+        }
+
+        if (auth()->user()->member_id &&
+            $consultation->member_id != auth()->user()->member_id) {
+            abort(403);
+        }
+
+        $consultation->load([
+            'doctor',
+            'member',
+            'chats',
+        ]);
+
+        if (auth()->user()->doctor_id) {
+            return view('doctors.chat', compact('consultation'));
+        }
+
+        return view('members.chat', compact('consultation'));
     }
 
     public function edit(Consultation $consultation)

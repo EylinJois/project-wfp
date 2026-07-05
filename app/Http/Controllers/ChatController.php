@@ -3,17 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chat;
+use App\Models\Consultation;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
     public function index()
     {
-        $chats = Chat::query()
-            ->orderByDesc('delivered_at')
-            ->get();
+        // $chats = Chat::query()
+        //     ->orderByDesc('delivered_at')
+        //     ->get();
 
-        return view('chat', compact('chats'));
+        // return view('chat', compact('chats'));
     }
 
     public function create()
@@ -23,22 +24,39 @@ class ChatController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'chat' => ['required', 'string', 'max:255'],
-            'member_id' => ['required', 'integer', 'exists:members,id'],
-            'doctor' => ['required', 'integer', 'exists:doctors,id'],
-            'consultation' => ['required', 'integer', 'exists:consultations,id'],
-            'delivered_at' => ['required', 'date'],
+        $request->validate([
+            'chat' => 'required',
+            'consultation_id' => 'required|exists:consultations,id',
         ]);
 
-        Chat::create($validated);
+        $consultation = Consultation::findOrFail($request->consultation_id);
 
-        return redirect()->route('chat.index');
+        Chat::create([
+            'chat' => $request->chat,
+            'consultation_id' => $consultation->id,
+            'doctor_id' => $consultation->doctor_id,
+            'member_id' => $consultation->member_id,
+            'sender_role' => auth()->user()->role,
+            'delivered_at' => now(),
+        ]);
+
+        return back();
     }
 
-    public function show(Chat $chat)
+    public function show(Consultation $consultation)
     {
-        return response()->json(['chats' => $chat]);
+        // // return response()->json(['chats' => $chat]);
+
+        $consultation->load([
+            'doctor',
+            'member',
+            'chats',
+        ]);
+
+        return view(
+            'members.chat',
+            compact('consultation')
+        );
     }
 
     public function edit(Chat $chat)
