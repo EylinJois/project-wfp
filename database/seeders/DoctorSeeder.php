@@ -12,13 +12,13 @@ class DoctorSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('doctors')->insert([
+        $doctors = [
             [
                 'fullname' => 'dr. Kevin Pratama',
                 'sip' => 'SIP/101/A1/2024',
                 'experience' => '3 Tahun',
                 'photo' => 'dokter_kevin.png',
-                'specialty_id' => 4, // Asumsi: Dokter Umum
+                'specialty_id' => 4,
                 'start_time' => '08:00:00',
                 'end_time' => '15:00:00',
             ],
@@ -57,7 +57,17 @@ class DoctorSeeder extends Seeder
                 'specialty_id' => 6,
                 'start_time' => '08:00:00',
                 'end_time' => '13:00:00',
-            ]
-        ]);
+            ],
+        ];
+
+        foreach ($doctors as $doctor) {
+            DB::table('doctors')->updateOrInsert(
+                ['sip' => $doctor['sip']],
+                array_merge($doctor, [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ])
+            );
+        }
     }
 }

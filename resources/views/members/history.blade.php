@@ -67,7 +67,7 @@
 
                                     <small class="text-muted">
 
-                                        {{ $consultation->doctor->specialty->specialty_name }}
+                                        {{ $consultation->doctor->specialty->name ?? 'N/A' }}
 
                                     </small>
 

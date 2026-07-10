@@ -39,7 +39,13 @@ class ArticleSeeder extends Seeder
         ];
 
         foreach ($articles as $article) {
-            Article::create($article);
+            Article::updateOrCreate(
+                [
+                    'title' => $article['title'],
+                    'date' => $article['date'],
+                ],
+                $article
+            );
         }
     }
 }

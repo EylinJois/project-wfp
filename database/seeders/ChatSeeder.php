@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Chat;
 use App\Models\Consultation;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class ChatSeeder extends Seeder
@@ -14,55 +14,62 @@ class ChatSeeder extends Seeder
      */
     public function run(): void
     {
-        $consultation1 = Consultation::first();
-        $consultation2 = Consultation::skip(1)->first();
+        $consultations = Consultation::where('status', 'done')
+            ->orderBy('time')
+            ->take(2)
+            ->get();
 
-        if (!$consultation1 || !$consultation2) {
-            $this->command->warn('Data konsultasi kurang. Jalankan ConsultationSeeder dulu.');
+        if ($consultations->count() < 2) {
+            $this->command->warn('Data konsultasi done kurang. Jalankan ConsultationSeeder dulu.');
             return;
         }
 
-        $chats = [
+        $messages = [
             [
-                'consultation_id' => $consultation1->id,
-                'member_id'     => $consultation1->member_id,
-                'doctor_id'     => $consultation1->doctor_id,
-                'chat'         => 'Selamat pagi dok, kepala saya terasa sangat pusing sejak kemarin malam.',
-                'delivered_at'   => date('Y-m-d H:i:s', strtotime($consultation1->waktu . ' +1 minute')),
+                'consultation' => $consultations[0],
+                'sender_role' => 'member',
+                'chat' => 'Selamat pagi dok, kepala saya terasa sangat pusing sejak kemarin malam.',
+                'minutes' => 1,
             ],
             [
-                'consultation_id' => $consultation1->id,
-                'member_id'     => $consultation1->member_id,
-                'doctor_id'     => $consultation1->doctor_id,
-                'chat'         => 'Selamat pagi. Apakah ada gejala lain yang menyertai, seperti mual atau pandangan kabur?',
-                'delivered_at'   => date('Y-m-d H:i:s', strtotime($consultation1->waktu . ' +3 minutes')),
+                'consultation' => $consultations[0],
+                'sender_role' => 'doctor',
+                'chat' => 'Selamat pagi. Apakah ada gejala lain yang menyertai, seperti mual atau pandangan kabur?',
+                'minutes' => 3,
             ],
             [
-                'consultation_id' => $consultation1->id,
-                'member_id'     => $consultation1->member_id,
-                'doctor_id'     => $consultation1->doctor_id,
-                'chat'         => 'Ada dok, sedikit mual kalau habis makan. Pandangan sih aman.',
-                'delivered_at'   => date('Y-m-d H:i:s', strtotime($consultation1->waktu . ' +5 minutes')),
-            ],
-
-            [
-                'consultation_id' => $consultation2->id,
-                'member_id'     => $consultation2->member_id,
-                'doctor_id'     => $consultation2->doctor_id,
-                'chat'         => 'Halo dokter, permisi. Tangan saya tiba-tiba gatal dan merah.',
-                'delivered_at'   => date('Y-m-d H:i:s', strtotime($consultation2->waktu . ' +2 minutes')),
+                'consultation' => $consultations[0],
+                'sender_role' => 'member',
+                'chat' => 'Ada dok, sedikit mual kalau habis makan. Pandangan sih aman.',
+                'minutes' => 5,
             ],
             [
-                'consultation_id' => $consultation2->id,
-                'member_id'     => $consultation2->member_id,
-                'doctor_id'     => $consultation2->doctor_id,
-                'chat'         => 'Halo. Sebelumnya apakah Anda baru saja mengonsumsi makanan laut (seafood)?',
-                'delivered_at'   => date('Y-m-d H:i:s', strtotime($consultation2->waktu . ' +4 minutes')),
+                'consultation' => $consultations[1],
+                'sender_role' => 'member',
+                'chat' => 'Halo dokter, permisi. Tangan saya tiba-tiba gatal dan merah.',
+                'minutes' => 2,
+            ],
+            [
+                'consultation' => $consultations[1],
+                'sender_role' => 'doctor',
+                'chat' => 'Halo. Sebelumnya apakah Anda baru saja mengonsumsi makanan laut (seafood)?',
+                'minutes' => 4,
             ],
         ];
 
-        foreach ($chats as $chat) {
-            Chat::create($chat);
+        foreach ($messages as $message) {
+            Chat::updateOrCreate(
+                [
+                    'consultation_id' => $message['consultation']->id,
+                    'chat' => $message['chat'],
+                ],
+                [
+                    'member_id' => $message['consultation']->member_id,
+                    'doctor_id' => $message['consultation']->doctor_id,
+                    'sender_role' => $message['sender_role'],
+                    'delivered_at' => Carbon::parse($message['consultation']->time)->addMinutes($message['minutes']),
+                ]
+            );
         }
     }
 }

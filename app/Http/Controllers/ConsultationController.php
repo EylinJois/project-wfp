@@ -6,10 +6,26 @@ use App\Models\Consultation;
 use App\Models\Doctor;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 
 class ConsultationController extends Controller
 {
+    private function generateSchedules(Doctor $doctor): array
+    {
+        $start = Carbon::parse($doctor->start_time);
+        $end = Carbon::parse($doctor->end_time);
+
+        $schedules = [];
+
+        while ($start < $end) {
+            $schedules[] = $start->format('H:i:s');
+            $start->addHour();
+        }
+
+        return $schedules;
+    }
+
     public function index()
     {
         $consultations = Consultation::query()
@@ -28,18 +44,7 @@ class ConsultationController extends Controller
         $selectedDate = $request->date ?? now()->toDateString();
 
         // doctor working hours
-        $start = Carbon::parse($doctor->start_time);
-        $end = Carbon::parse($doctor->end_time);
-
-        // generate all schedules
-        $allSchedules = [];
-
-        while ($start < $end) {
-
-            $allSchedules[] = $start->format('H:i:s');
-
-            $start->addHour();
-        }
+        $allSchedules = $this->generateSchedules($doctor);
 
         // booked schedules
         $bookedSchedules = Consultation::where('doctor_id', $doctor->id)
@@ -55,10 +60,8 @@ class ConsultationController extends Controller
             $allSchedules,
             $bookedSchedules
         );
-        $activeConsultation = Consultation::where(
-            'member_id',
-            auth()->user()->member_id
-        )
+        $activeConsultation = Consultation::with('doctor')
+            ->where('member_id', auth()->user()->member_id)
             ->whereIn('status', ['pending', 'ongoing'])
             ->latest('time')
             ->first();
@@ -77,14 +80,21 @@ class ConsultationController extends Controller
     {
         $doctors = Doctor::with('specialty')->get();
 
-        $consultation = Consultation::where('member_id', auth()->user()->member_id)
+        $activeConsultation = Consultation::with('doctor')
+            ->where('member_id', auth()->user()->member_id)
             ->whereIn('status', ['pending', 'ongoing'])
-            ->latest()
+            ->latest('time')
             ->first();
 
         return view(
             'members.consultation',
-            compact('consultation', 'doctors')
+            [
+                'doctor' => null,
+                'doctors' => $doctors,
+                'availableSchedules' => [],
+                'selectedDate' => now()->toDateString(),
+                'activeConsultation' => $activeConsultation,
+            ]
         );
     }
 
@@ -92,7 +102,7 @@ class ConsultationController extends Controller
     public function history()
     {
         $consultations = Consultation::with([
-            'doctor',
+            'doctor.specialty',
             'chats',
         ])
             ->where('member_id', auth()->user()->member_id)
@@ -119,7 +129,7 @@ class ConsultationController extends Controller
         );
 
         $consultation->load([
-            'doctor',
+            'doctor.specialty',
             'member',
             'chats',
         ]);
@@ -198,32 +208,62 @@ class ConsultationController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $request->merge([
-                'time' => $request->consultation_date.' '.$request->schedule_radio,
+        $validated = $request->validate([
+            'consultation_date' => ['required', 'date', 'after_or_equal:today'],
+            'schedule_radio' => ['required', 'date_format:H:i:s'],
+            'doctor_id' => ['required', 'integer', 'exists:doctors,id'],
+        ]);
+
+        $doctor = Doctor::findOrFail($validated['doctor_id']);
+        $memberId = auth()->user()->member_id;
+
+        $activeConsultation = Consultation::where('member_id', $memberId)
+            ->whereIn('status', ['pending', 'ongoing'])
+            ->latest('time')
+            ->first();
+
+        if ($activeConsultation) {
+            throw ValidationException::withMessages([
+                'member_id' => 'You already have an active consultation.',
             ]);
-            $validated = $request->validate([
-                'time' => ['required'],
-                'status' => ['required', 'string', 'max:20'],
-                'consultation_type' => ['required', Rule::in(['none', 'ongoing', 'done'])],
-                'notes' => ['nullable', 'string'],
-                'member_id' => ['required', 'integer', 'exists:members,id'],
-                'doctor_id' => ['required', 'integer', 'exists:doctors,id'],
-            ]);
-
-            Consultation::create($validated);
-
-            return redirect()
-                ->route('consultation.index')
-                ->with('success', 'Consultation booked successfully.');
-        } catch (\Exception $e) {
-
-            return response()->json([
-                'error' => true,
-                'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-            ], 500);
         }
+
+        $selectedDate = Carbon::parse($validated['consultation_date'])->toDateString();
+        $selectedTime = Carbon::createFromFormat('H:i:s', $validated['schedule_radio'])->format('H:i:s');
+        $availableSchedules = $this->generateSchedules($doctor);
+
+        if (! in_array($selectedTime, $availableSchedules, true)) {
+            throw ValidationException::withMessages([
+                'schedule_radio' => 'Selected schedule is outside the doctor working hours.',
+            ]);
+        }
+
+        $bookedSchedules = Consultation::where('doctor_id', $doctor->id)
+            ->whereDate('time', $selectedDate)
+            ->pluck('time')
+            ->map(function ($time) {
+                return Carbon::parse($time)->format('H:i:s');
+            })
+            ->toArray();
+
+        if (in_array($selectedTime, $bookedSchedules, true)) {
+            throw ValidationException::withMessages([
+                'schedule_radio' => 'Selected schedule is already booked.',
+            ]);
+        }
+
+        Consultation::create([
+            'time' => Carbon::createFromFormat('Y-m-d H:i:s', $selectedDate . ' ' . $selectedTime),
+            'status' => 'pending',
+            'consultation_type' => 'none',
+            'notes' => null,
+            'member_id' => $memberId,
+            'doctor_id' => $doctor->id,
+        ]);
+
+        return redirect()
+            ->route('consultation.index')
+            ->with('success', 'Consultation booked successfully.');
     }
 
     // check if the user is the doctor or member of the consultation
@@ -264,8 +304,8 @@ class ConsultationController extends Controller
             'status' => ['required', 'string', 'max:20'],
             'consultation_type' => ['required', Rule::in(['kosong', 'sedang berlangsung', 'selesai'])],
             'notes' => ['nullable', 'string'],
-            'member_id' => ['required', 'integer', 'exists:member,id'],
-            'doctor' => ['required', 'integer', 'exists:dokter,id'],
+            'member_id' => ['required', 'integer', 'exists:members,id'],
+            'doctor_id' => ['required', 'integer', 'exists:doctors,id'],
         ]);
 
         $consultation->update($validated);

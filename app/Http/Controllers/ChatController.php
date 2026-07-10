@@ -10,11 +10,15 @@ class ChatController extends Controller
 {
     public function index()
     {
-        // $chats = Chat::query()
-        //     ->orderByDesc('delivered_at')
-        //     ->get();
+        $chats = Chat::with([
+            'doctor',
+            'member',
+            'consultation',
+        ])
+            ->orderByDesc('delivered_at')
+            ->get();
 
-        // return view('chat', compact('chats'));
+        return view('chat', compact('chats'));
     }
 
     public function create()
@@ -24,15 +28,15 @@ class ChatController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'chat' => 'required',
-            'consultation_id' => 'required|exists:consultations,id',
+            'consultation_id' => 'required|integer|exists:consultations,id',
         ]);
 
-        $consultation = Consultation::findOrFail($request->consultation_id);
+        $consultation = Consultation::findOrFail($validated['consultation_id']);
 
         Chat::create([
-            'chat' => $request->chat,
+            'chat' => $validated['chat'],
             'consultation_id' => $consultation->id,
             'doctor_id' => $consultation->doctor_id,
             'member_id' => $consultation->member_id,
@@ -45,18 +49,17 @@ class ChatController extends Controller
 
     public function show(Consultation $consultation)
     {
-        // // return response()->json(['chats' => $chat]);
-
         $consultation->load([
             'doctor',
             'member',
             'chats',
         ]);
 
-        return view(
-            'members.chat',
-            compact('consultation')
-        );
+        if (auth()->user()->doctor_id) {
+            return view('doctors.chat', compact('consultation'));
+        }
+
+        return view('members.chat', compact('consultation'));
     }
 
     public function edit(Chat $chat)
@@ -68,21 +71,22 @@ class ChatController extends Controller
     {
         $validated = $request->validate([
             'chat' => ['required', 'string', 'max:255'],
-            'member_id' => ['required', 'integer', 'exists:member,id'],
-            'doctor' => ['required', 'integer', 'exists:dokter,id'],
-            'consultation' => ['required', 'integer', 'exists:konsultasi,id'],
+            'member_id' => ['required', 'integer', 'exists:members,id'],
+            'doctor_id' => ['required', 'integer', 'exists:doctors,id'],
+            'consultation_id' => ['required', 'integer', 'exists:consultations,id'],
+            'sender_role' => ['required', 'string', 'in:member,doctor'],
             'delivered_at' => ['required', 'date'],
         ]);
 
         $chat->update($validated);
 
-        return redirect()->route('chat.index');
+        return back();
     }
 
     public function destroy(Chat $chat)
     {
         $chat->delete();
 
-        return redirect()->route('chat.index');
+        return back();
     }
 }

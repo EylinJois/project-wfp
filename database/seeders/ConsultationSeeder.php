@@ -23,58 +23,58 @@ class ConsultationSeeder extends Seeder
             return;
         }
 
-        DB::table('consultations')->insert([
+        $consultations = [
             [
                 'time' => date('Y-m-d 10:00:00', strtotime('-2 days')),
-                'status' => 'Chat',
+                'status' => 'done',
                 'consultation_type' => 'done',
                 'notes' => 'Pasien mengeluh pusing dan mual sejak pagi. Disarankan istirahat cukup.',
-                'member_id' => $memberIds[array_rand($memberIds)],
-                'doctor_id' => $doctorIds[array_rand($doctorIds)],
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'member_id' => $memberIds[0],
+                'doctor_id' => $doctorIds[0],
             ],
             [
                 'time' => date('Y-m-d 14:30:00', strtotime('-1 days')),
-                'status' => 'Chat',
+                'status' => 'done',
                 'consultation_type' => 'done',
                 'notes' => 'Konsultasi pasca operasi. Luka mengering dengan baik, lanjut obat jalan.',
-                'member_id' => $memberIds[array_rand($memberIds)],
-                'doctor_id' => $doctorIds[array_rand($doctorIds)],
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ],
-            [
-                'time' => date('Y-m-d H:i:s', strtotime('+2 hours')),
-                'status' => 'Video',
-                'consultation_type' => 'done',
-                'notes' => 'Keluhan gatal-gatal di area lengan setelah makan seafood.',
-                'member_id' => $memberIds[array_rand($memberIds)],
-                'doctor_id' => $doctorIds[array_rand($doctorIds)],
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'member_id' => $memberIds[1],
+                'doctor_id' => $doctorIds[1],
             ],
             [
                 'time' => date('Y-m-d 09:00:00', strtotime('-5 days')),
-                'status' => 'Chat',
+                'status' => 'done',
+                'consultation_type' => 'done',
+                'notes' => 'Keluhan gatal-gatal di area lengan setelah makan seafood.',
+                'member_id' => $memberIds[2],
+                'doctor_id' => $doctorIds[2],
+            ],
+            [
+                'time' => date('Y-m-d 09:00:00', strtotime('+2 days')),
+                'status' => 'pending',
                 'consultation_type' => 'none',
                 'notes' => 'Pasien tidak hadir pada jam yang ditentukan.',
-                'member_id' => $memberIds[array_rand($memberIds)],
-                'doctor_id' => $doctorIds[array_rand($doctorIds)],
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'member_id' => $memberIds[3],
+                'doctor_id' => $doctorIds[3],
             ],
             [
                 'time' => date('Y-m-d 19:00:00', strtotime('-3 days')),
-                'status' => 'video',
+                'status' => 'ongoing',
                 'consultation_type' => 'ongoing',
                 'notes' => 'Anak demam 38 derajat. Diberikan resep paracetamol cair.',
-                'member_id' => $memberIds[array_rand($memberIds)],
-                'doctor_id' => $doctorIds[array_rand($doctorIds)],
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'member_id' => $memberIds[4],
+                'doctor_id' => $doctorIds[4],
             ],
-        ]);
+        ];
+
+        foreach ($consultations as $consultation) {
+            DB::table('consultations')->updateOrInsert(
+                ['notes' => $consultation['notes']],
+                array_merge($consultation, [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ])
+            );
+        }
 
     }
 }
