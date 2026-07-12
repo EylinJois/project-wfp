@@ -9,14 +9,12 @@
 
             <div class="card shadow-sm">
 
-                <!-- Header -->
                 <div class="card-header bg-primary">
                     <h3 class="card-title text-white">
                         Edit Profile
                     </h3>
                 </div>
 
-                <!-- Form -->
                 <form action="{{ route('doctor.updateProfile', $doctor->id) }}"
                     method="POST"
                     enctype="multipart/form-data">
@@ -46,12 +44,10 @@
 
                             </div>
 
-                            <!-- Form Input -->
                             <div class="col-md-8">
 
                                 <div class="row">
 
-                                    <!-- Full Name -->
                                     <div class="col-md-6 mb-3">
                                         <label class="font-weight-bold">
                                             Full Name
@@ -63,7 +59,6 @@
                                             value="{{ old('fullname', $doctor->fullname) }}">
                                     </div>
 
-                                    <!-- SIP -->
                                     <div class="col-md-6 mb-3">
                                         <label class="font-weight-bold">
                                             SIP
@@ -75,7 +70,6 @@
                                             value="{{ old('sip', $doctor->sip) }}">
                                     </div>
 
-                                    <!-- Experience -->
                                     <div class="col-md-6 mb-3">
                                         <label class="font-weight-bold">
                                             Experience
@@ -87,7 +81,6 @@
                                             value="{{ old('experience', $doctor->experience) }}">
                                     </div>
 
-                                    <!-- Specialization -->
                                     <div class="col-md-6 mb-3">
                                         <label class="font-weight-bold">
                                             Specialization
@@ -110,7 +103,6 @@
                                         </select>
                                     </div>
 
-                                    <!-- Start Time -->
                                     <div class="col-md-6 mb-3">
                                         <label class="font-weight-bold">
                                             Start Practice
@@ -122,7 +114,6 @@
                                             value="{{ old('start_time', $doctor->start_time) }}">
                                     </div>
 
-                                    <!-- End Time -->
                                     <div class="col-md-6 mb-3">
                                         <label class="font-weight-bold">
                                             End Practice
@@ -142,7 +133,6 @@
                                 </div>
                                 @endsession
 
-                                <!-- Buttons -->
                                 <div class="mt-4">
 
                                     <button type="submit"

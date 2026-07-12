@@ -191,7 +191,6 @@
         formData.append('start_time', start_time);
         formData.append('end_time', end_time);
 
-        // append photo only if selected
         if (photo) {
             formData.append('photo', photo);
         }
@@ -201,8 +200,8 @@
             url: '{{ route("doctor.saveDataUpdate") }}',
             data: formData,
 
-            processData: false, // important
-            contentType: false, // important
+            processData: false,
+            contentType: false,
 
             success: function(data) {
                 if (data.status == "oke") {
