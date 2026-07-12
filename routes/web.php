@@ -105,7 +105,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/doctor/{doctor}', [DoctorController::class, 'destroy'])
             ->name('doctor.destroy');
 
-        Route::get('article/db', [ArticleController::class, 'dbIndex'])->name('dbArticle');
+
+        Route::get('/artikel', [ArticleController::class, 'memberIndex'])->name('article.member_index');
+        Route::get('/artikel/{article}', [ArticleController::class, 'show'])->name('article.show');
+
+        Route::resource('admin/article', ArticleController::class)->except(['show']);
 
         Route::get('/admin/consultation', [ConsultationController::class, 'index'])
             ->name('admin.consultation.index');
