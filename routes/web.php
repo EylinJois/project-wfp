@@ -105,7 +105,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/doctor/{doctor}', [DoctorController::class, 'destroy'])
             ->name('doctor.destroy');
 
-
         Route::get('/artikel', [ArticleController::class, 'memberIndex'])->name('article.member_index');
         Route::get('/artikel/{article}', [ArticleController::class, 'show'])->name('article.show');
 
@@ -125,8 +124,17 @@ Route::middleware('auth')->group(function () {
         Route::resource('user', UserController::class)->names([
             'index' => 'user',
         ]);
-    });
+        Route::post('/user/getEditForm',[UserController::class,'getEditForm'])->name('user.getEditForm');
+        });
+        Route::post('/user/save-data-update', [UserController::class, 'saveDataUpdate'])->name('user.saveDataUpdate');
+        Route::post('/user/deleteData', [UserController::class, 'deleteData'])->name('user.deleteData');
+        Route::post('/user/store-ajax', [UserController::class, 'storeAjax'])->name('user.storeAjax');
 
+        Route::get('/members', [MemberController::class, 'index'])->name('member.index');
+        Route::post('/members/store-ajax', [MemberController::class, 'storeAjax'])->name('member.storeAjax');
+        Route::post('/members/get-edit-form', [MemberController::class, 'getEditForm'])->name('member.getEditForm');
+        Route::post('/members/save-update', [MemberController::class, 'saveDataUpdate'])->name('member.saveDataUpdate');
+        Route::post('/members/delete', [MemberController::class, 'deleteData'])->name('member.deleteData');
     Route::get('/', function () {
         return view('home');
     })->name('home');

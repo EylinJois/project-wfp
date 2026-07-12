@@ -26,7 +26,7 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'nomor_telepon',
+        'phone_number',
         'is_admin',
         'member_id',
         'doctor_id',

@@ -26,10 +26,10 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'username' => ['required', 'string', 'max:100', Rule::unique('user', 'username')],
-            'email' => ['required', 'email', 'max:100', Rule::unique('user', 'email')],
+            'username' => ['required', 'string', 'max:100', Rule::unique('users', 'username')],
+            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'max:255'],
-            'phone_number' => ['required', 'string', 'max:15', Rule::unique('user', 'phone_number')],
+            'phone_number' => ['required', 'string', 'max:15', Rule::unique('users', 'phone_number')],
             'is_admin' => ['sometimes', 'boolean'],
             'member_id' => ['nullable', 'integer', 'exists:member,id'],
             'doctor_id' => ['nullable', 'integer', 'exists:doctor,id'],
@@ -55,10 +55,10 @@ class UserController extends Controller
     public function update(Request $request, string $user)
     {
         $validated = $request->validate([
-            'username' => ['required', 'string', 'max:100', Rule::unique('user', 'username')->ignore($user, 'username')],
-            'email' => ['required', 'email', 'max:100', Rule::unique('user', 'email')->ignore($user, 'username')],
+            'username' => ['required', 'string', 'max:100', Rule::unique('users', 'username')->ignore($user, 'username')],
+            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')->ignore($user, 'username')],
             'password' => ['nullable', 'string', 'max:255'],
-            'phone_number' => ['required', 'string', 'max:15', Rule::unique('user', 'phone_number')->ignore($user, 'username')],
+            'phone_number' => ['required', 'string', 'max:15', Rule::unique('users', 'phone_number')->ignore($user, 'username')],
             'is_admin' => ['sometimes', 'boolean'],
             'member_id' => ['nullable', 'integer', 'exists:member,id'],
             'doctor_id' => ['nullable', 'integer', 'exists:doctor,id'],
@@ -85,5 +85,103 @@ class UserController extends Controller
     private function findUserByUsername(string $username): User
     {
         return User::query()->where('username', $username)->firstOrFail();
+    }
+
+    public function storeAjax(Request $request)
+    {
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'max:100', Rule::unique('users', 'username')],
+            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')],
+            'password' => ['required', 'string', 'max:255'],
+            'phone_number' => ['required', 'string', 'max:15', Rule::unique('users', 'phone_number')],
+            'is_admin' => ['sometimes', 'boolean'],
+        ]);
+
+        $validated['password'] = Hash::make($validated['password']);
+
+        // Simpan data ke database
+        $user = User::create($validated);
+
+        // Kirim respons JSON beserta data user yang baru dibuat
+        return response()->json([
+            'status' => 'oke',
+            'users' => [
+                'username'     => $user->username,
+                'email'        => $user->email,
+                'phone_number' => $user->phone_number,
+                'is_admin'     => $user->is_admin,
+                'member_id'    => $user->member_id,
+                'doctor_id'    => $user->doctor_id,
+                'created_at'   => $user->created_at->toDateTimeString(),
+                'updated_at'   => $user->updated_at->toDateTimeString(),
+            ]
+        ]);
+    }
+
+    public function getEditForm(Request $request)
+    {
+        $user = User::findOrFail($request->username);
+    
+        return response()->json([
+            'username'      => $user->username,
+            'email'         => $user->email,
+            'phone_number'  => $user->phone_number,
+            'member_id'     => $user->member_id,
+            'doctor_id'     => $user->doctor_id
+        ]);
+    }
+    
+    public function saveDataUpdate(Request $request)
+    {
+        $request->validate([
+            'username'   => 'required',
+            'email'      => 'required|email',
+            'password'   => 'nullable|confirmed|min:6',
+            'member_id'  => 'nullable|integer|exists:members,id',
+            'doctor_id'  => 'nullable|integer|exists:doctors,id',
+        ]);
+    
+        $user = User::where('username', $request->username)->first();
+    
+        if ($user) {
+            $user->email = $request->email;
+            $user->phone_number = $request->phone_number;
+            $user->member_id = $request->filled('member_id') ? $request->member_id : null;
+            $user->doctor_id = $request->filled('doctor_id') ? $request->doctor_id : null;
+    
+            if ($request->filled('password')) {
+                $user->password = bcrypt($request->password);
+            }
+    
+            $user->save();
+    
+            return response()->json([
+                'status' => 'oke',
+                'updated_at' => $user->updated_at->toDateTimeString()
+            ]);
+        }
+    
+        return response()->json([
+            'status' => 'gagal',
+            'msg' => 'User tidak ditemukan.'
+        ]);
+    }
+    public function deleteData(Request $request)
+    {
+        // Cari user berdasarkan username yang dikirim AJAX
+        $user = User::where('username', $request->username)->first();
+
+        if ($user) {
+            $user->delete(); // Hapus dari database
+
+            return response()->json([
+                'status' => 'oke'
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'gagal',
+            'msg' => 'User tidak ditemukan.'
+        ]);
     }
 }

@@ -138,7 +138,6 @@
                             </a>
                         </li>
 
-                        <!-- TODO: Ganti route untuk dashboard -->
                         @if (Auth::user()->is_admin)
                             <li class="nav-item">
                                 <a href={{ route('home') }} class="nav-link @yield('dashboard')">
@@ -148,7 +147,6 @@
                             </li>
                         @endif
 
-                        <!-- TODO: Ganti route untuk dokter -->
                         @if (!is_null(Auth::user()->member_id) || !is_null(Auth::user()->doctor_id))
                             <li class="nav-item">
                                 <a href={{ route('doctor.index') }} class="nav-link @yield('menu-doctors')">
@@ -158,7 +156,6 @@
                             </li>
                         @endif
 
-                        <!-- TODO: Ganti route untuk article -->
                         @if (!is_null(Auth::user()->member_id) || !is_null(Auth::user()->doctor_id))
                             <li class="nav-item">
                                 <a href={{ route('article.index') }} class="nav-link @yield('menu-article')">
@@ -206,26 +203,6 @@
                             </li>
                         @endif
 
-                        <!-- TODO: Ganti route untuk manage user -->
-                        @if (Auth::user()->is_admin)
-                            <li class="nav-item">
-                                <a href={{ route('home') }} class="nav-link @yield('menu-manage-user')">
-                                    <i class="nav-icon fa-solid fa-user-gear"></i>
-                                    <p>Manage User</p>
-                                </a>
-                            </li>
-                        @endif
-
-                        @if (Auth::user()->is_admin)
-                            <li class="nav-item">
-                                <a href={{ route('doctor.index') }} class="nav-link @yield('menu-doctors')">
-                                    <i class="nav-icon fa-solid fa-user-doctor"></i>
-                                    <p>Doctors</p>
-                                </a>
-                            </li>
-                        @endif
-
-                        <!-- TODO: Ganti route untuk menampilkan setiap tabel -->
                         @if (Auth::user()->is_admin)
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
@@ -266,14 +243,14 @@
                                     </li>
 
                                     {{-- <li class="nav-item">
-                                    <a href={{ route('chat') }} class="nav-link @yield('menu')">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Chat</p>
-                                    </a>
-                                </li> --}}
+                                        <a href={{ route('chat') }} class="nav-link @yield('menu')">
+                                            <i class="nav-icon bi bi-circle"></i>
+                                            <p>Chat</p>
+                                        </a>
+                                    </li> --}}
 
                                     <li class="nav-item">
-                                        <a href={{ route('dbArticle') }} class="nav-link @yield('menu')">
+                                        <a href={{ route('article.index') }} class="nav-link @yield('menu')">
                                             <i class="nav-icon bi bi-circle"></i>
                                             <p>Article</p>
                                         </a>
