@@ -14,7 +14,7 @@ class ArticleController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole("admin")) {
+        if ($user->role === 'admin') {
             $articles = Article::query()
                 ->orderByDesc('date')
                 ->get();
@@ -30,7 +30,7 @@ class ArticleController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole("admin")) {
+        if ($user->role === 'admin') {
             return response()->json(['message' => 'Form create article belum tersedia.']);
         } else {
             abort(403, '403 Forbidden Access');
@@ -41,7 +41,7 @@ class ArticleController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole("admin")) {
+        if ($user->role === 'admin') {
             try {
                 $validated = $request->validate([
                     'title' => ['required', 'string', 'max:255'],
@@ -87,7 +87,7 @@ class ArticleController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole("admin")) {
+        if ($user->role === 'admin') {
             return response()->json(['data' => $article]);
         } else {
             abort(403, '403 Forbidden Access');
@@ -98,7 +98,7 @@ class ArticleController extends Controller
     {
         $user = auth()->user();
         
-        if ($user->hasRole("admin")) {
+        if ($user->role === 'admin') {
             $validated = $request->validate([
                 'title' => ['required', 'string', 'max:255'],
                 'date' => ['required', 'date'],
@@ -137,7 +137,7 @@ class ArticleController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole("admin")) {
+        if ($user->role === 'admin') {
             if ($article->photo) {
                 Storage::delete('public/photos/' . $article->photo);
             }
