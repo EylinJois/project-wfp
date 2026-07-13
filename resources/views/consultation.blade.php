@@ -106,15 +106,18 @@
 
                     <div class="mb-3">
                         <label class="form-label">Status</label>
-                        <input type="text" name="status" id="add_status" class="form-control" maxlength="20" required>
+                        <select name="status" id="add_status" class="form-control" required>
+                            <option value="pending">Pending</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="done">Done</option>
+                        </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Consultation Type</label>
-                        <select name="consultation_type" id="add_consultation_type" class="form-control">
-                            <option value="none">None</option>
-                            <option value="ongoing">Ongoing</option>
-                            <option value="done">Done</option>
+                        <select name="consultation_type" id="add_consultation_type" class="form-control" required>
+                            <option value="general consultation">General Consultation</option>
+                            <option value="specialist consultation">Specialist Consultation</option>
                         </select>
                     </div>
 
@@ -173,15 +176,18 @@
 
                     <div class="mb-3">
                         <label class="form-label">Status</label>
-                        <input type="text" id="edit_status" class="form-control" maxlength="20" required>
+                        <select id="edit_status" class="form-control" required>
+                            <option value="pending">Pending</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="done">Done</option>
+                        </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Consultation Type</label>
-                        <select id="edit_consultation_type" class="form-control">
-                            <option value="none">None</option>
-                            <option value="ongoing">Ongoing</option>
-                            <option value="done">Done</option>
+                        <select id="edit_consultation_type" class="form-control" required>
+                            <option value="general consultation">General Consultation</option>
+                            <option value="specialist consultation">Specialist Consultation</option>
                         </select>
                     </div>
 

@@ -300,15 +300,15 @@ class ConsultationController extends Controller
     {
         $validated = $request->validate([
             'time' => ['required', 'date'],
-            'status' => ['required', 'string', 'max:20'],
-            'consultation_type' => ['required', Rule::in(['General Consultation', 'Specialist Consultation', 'Follow-up Consultation'])],
+            'status' => ['required', Rule::in(['pending', 'ongoing', 'done'])],
+            'consultation_type' => ['required', Rule::in(['general consultation', 'specialist consultation'])],
             'notes' => ['nullable', 'string'],
             'member_id' => ['required', 'integer', 'exists:members,id'],
             'doctor_id' => ['required', 'integer', 'exists:doctors,id'],
         ]);
-
+    
         $consultation->update($validated);
-
+    
         return redirect()->route('consultation');
     }
 
@@ -323,19 +323,19 @@ class ConsultationController extends Controller
     {
         $request->validate([
             'time'               => 'required|date',
-            'status'             => 'required|string|max:20',
-            'consultation_type'  => 'required|in:none,ongoing,done',
+            'status'             => 'required|in:pending,ongoing,done',
+            'consultation_type'  => 'required|in:general consultation,specialist consultation',
             'notes'              => 'nullable|string',
             'member_id'          => 'required|exists:members,id',
             'doctor_id'          => 'required|exists:doctors,id',
         ]);
-
+    
         $consultation = Consultation::create($request->only([
             'time', 'status', 'consultation_type', 'notes', 'member_id', 'doctor_id'
         ]));
-
+    
         $consultation->load('member', 'doctor');
-
+    
         return response()->json([
             'status' => 'oke',
             'consultation' => [
@@ -367,46 +367,46 @@ class ConsultationController extends Controller
         ]);
     }
 
-    public function saveDataUpdate(Request $request)
-    {
-        $request->validate([
-            'id'                 => 'required|exists:consultations,id',
-            'time'               => 'required|date',
-            'status'             => 'required|string|max:20',
-            'consultation_type'  => 'required|in:none,ongoing,done',
-            'notes'              => 'nullable|string',
-            'member_id'          => 'required|exists:members,id',
-            'doctor_id'          => 'required|exists:doctors,id',
-        ]);
+public function saveDataUpdate(Request $request)
+{
+    $request->validate([
+        'id'                 => 'required|exists:consultations,id',
+        'time'               => 'required|date',
+        'status'             => 'required|in:pending,ongoing,done',
+        'consultation_type'  => 'required|in:general consultation,specialist consultation',
+        'notes'              => 'nullable|string',
+        'member_id'          => 'required|exists:members,id',
+        'doctor_id'          => 'required|exists:doctors,id',
+    ]);
 
-        $consultation = Consultation::find($request->id);
+    $consultation = Consultation::find($request->id);
 
-        if ($consultation) {
-            $consultation->time = $request->time;
-            $consultation->status = $request->status;
-            $consultation->consultation_type = $request->consultation_type;
-            $consultation->notes = $request->notes;
-            $consultation->member_id = $request->member_id;
-            $consultation->doctor_id = $request->doctor_id;
-            $consultation->save();
-
-            return response()->json([
-                'status'     => 'oke',
-                'member_id'  => $consultation->member_id,
-                'doctor_id'  => $consultation->doctor_id,
-                'time'       => $consultation->time,
-                'consultation_status' => $consultation->status,
-                'consultation_type'   => $consultation->consultation_type,
-                'notes'      => $consultation->notes,
-                'updated_at' => $consultation->updated_at->toDateTimeString()
-            ]);
-        }
+    if ($consultation) {
+        $consultation->time = $request->time;
+        $consultation->status = $request->status;
+        $consultation->consultation_type = $request->consultation_type;
+        $consultation->notes = $request->notes;
+        $consultation->member_id = $request->member_id;
+        $consultation->doctor_id = $request->doctor_id;
+        $consultation->save();
 
         return response()->json([
-            'status' => 'gagal',
-            'msg' => 'Consultation tidak ditemukan.'
+            'status'     => 'oke',
+            'member_id'  => $consultation->member_id,
+            'doctor_id'  => $consultation->doctor_id,
+            'time'       => $consultation->time,
+            'consultation_status' => $consultation->status,
+            'consultation_type'   => $consultation->consultation_type,
+            'notes'      => $consultation->notes,
+            'updated_at' => $consultation->updated_at->toDateTimeString()
         ]);
     }
+
+    return response()->json([
+        'status' => 'gagal',
+        'msg' => 'Consultation tidak ditemukan.'
+    ]);
+}
 
     public function deleteData(Request $request)
     {

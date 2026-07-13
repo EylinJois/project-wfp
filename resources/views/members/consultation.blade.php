@@ -173,34 +173,92 @@
 
 
                                     <!-- BOOKING FORM -->
+                                    <!-- BOOKING FORM -->
                                     <form action="{{ route('booking.store') }}" method="POST">
-
+                                    
                                         @csrf
-
+                                    
                                         <!-- doctor -->
                                         <input type="hidden" name="doctor_id" value="{{ $doctor->id }}">
-
+                                    
                                         <!-- member -->
                                         <input type="hidden" name="member_id" value="{{ Auth::user()->member_id }}">
-
+                                    
                                         <!-- status -->
                                         <input type="hidden" name="status" value="pending">
-
+                                    
                                         <!-- consultation type -->
-                                        <input type="hidden" name="consultation_type" value="none">
-
+                                        <input type="hidden" name="consultation_type" value="general consultation">
+                                    
                                         <!-- DATE -->
                                         <div class="form-group mb-4">
-
+                                    
                                             <label>
                                                 Consultation Date
                                             </label>
-
+                                    
                                             <input type="date" id="consultation_date" name="consultation_date"
                                                 class="form-control" value="{{ $selectedDate }}"
                                                 onchange="
-window.location='{{ route('booking.showSchedule', $doctor->id) }}?date='+this.value
-">
+                                    window.location='{{ route('booking.showSchedule', $doctor->id) }}?date='+this.value
+                                    ">
+                                    
+                                        </div>
+                                    
+                                        <!-- AVAILABLE SCHEDULE -->
+                                        <div class="mb-4">
+                                    
+                                            <label class="mb-3">
+                                                Available Schedule
+                                            </label>
+                                    
+                                            <div class="d-flex flex-wrap gap-2">
+                                    
+                                                @forelse($availableSchedules as $schedule)
+                                                    <div class="form-check">
+                                    
+                                                        <input class="btn-check consultation-radio" type="radio"
+                                                            value="{{ $schedule }}" name="schedule_radio"
+                                                            id="schedule_{{ $schedule }}" required>
+                                    
+                                                        <label class="btn btn-outline-success"
+                                                            for="schedule_{{ $schedule }}">
+                                    
+                                                            {{ $schedule }}
+                                    
+                                                        </label>
+                                    
+                                                    </div>
+                                    
+                                                @empty
+                                    
+                                                    <div class="alert alert-danger w-100">
+                                    
+                                                        No available schedule.
+                                    
+                                                    </div>
+                                                @endforelse
+                                    
+                                            </div>
+                                    
+                                        </div>
+                                    
+                                        <!-- SUBMIT -->
+                                        @if ($activeConsultation)
+                                            <button class="btn btn-secondary" disabled>
+                                    
+                                                You already have an active consultation
+                                    
+                                            </button>
+                                        @else
+                                            <button type="submit" class="btn btn-success">
+                                    
+                                                Confirm Booking
+                                    
+                                            </button>
+                                        @endif
+                                    
+                                    </form>
 
                                         </div>
 

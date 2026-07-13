@@ -18,6 +18,10 @@ class Consultation extends Model
         'status',
     ];
 
+    protected $casts = [
+        'time' => 'datetime',
+    ];
+
     public function member()
     {
         return $this->belongsTo(Member::class);
