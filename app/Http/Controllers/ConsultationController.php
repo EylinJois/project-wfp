@@ -184,8 +184,7 @@ class ConsultationController extends Controller
     public function start(Consultation $consultation)
     {
         $consultation->update([
-            'status' => 'ongoing',
-            'consultation_type' => 'ongoing',
+            'status' => 'ongoing'
         ]);
 
         return back()->with('success', 'Consultation started.');
@@ -196,7 +195,6 @@ class ConsultationController extends Controller
     {
         $consultation->update([
             'status' => 'done',
-            'consultation_type' => 'done',
         ]);
 
         return back()->with('success', 'Consultation finished.');
@@ -256,7 +254,7 @@ class ConsultationController extends Controller
         Consultation::create([
             'time' => Carbon::createFromFormat('Y-m-d H:i:s', $selectedDate . ' ' . $selectedTime),
             'status' => 'pending',
-            'consultation_type' => 'none',
+            'consultation_type' => 'General Consultation',
             'notes' => null,
             'member_id' => $memberId,
             'doctor_id' => $doctor->id,
@@ -303,7 +301,7 @@ class ConsultationController extends Controller
         $validated = $request->validate([
             'time' => ['required', 'date'],
             'status' => ['required', 'string', 'max:20'],
-            'consultation_type' => ['required', Rule::in(['kosong', 'sedang berlangsung', 'selesai'])],
+            'consultation_type' => ['required', Rule::in(['General Consultation', 'Specialist Consultation', 'Follow-up Consultation'])],
             'notes' => ['nullable', 'string'],
             'member_id' => ['required', 'integer', 'exists:members,id'],
             'doctor_id' => ['required', 'integer', 'exists:doctors,id'],
