@@ -261,7 +261,7 @@ class ConsultationController extends Controller
         ]);
 
         return redirect()
-            ->route('consultation')
+            ->route('consultation.indexConsultation')
             ->with('success', 'Consultation booked successfully.');
     }
 
