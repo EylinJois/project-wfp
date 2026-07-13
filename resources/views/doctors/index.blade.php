@@ -50,7 +50,6 @@
                         <td class="px-3 py-2" id="td_sip_{{ $doctor->id }}">{{ $doctor->sip }}</td>
                         <td class="px-3 py-2" id="td_experience_{{ $doctor->id }}">{{ $doctor->experience }}</td>
                         <td class="px-3 py-2" id="td_photo_{{ $doctor->id }}">
-                            <!-- {{ $doctor->photo }} -->
                             <img src="{{ asset('storage/photos/' . $doctor->photo) }}" width="100">
                         </td>
                         @endif

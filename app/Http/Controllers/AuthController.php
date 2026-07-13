@@ -19,7 +19,6 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    // TODO: Pastikan error ditampilkan (password/username salah)
     public function login(Request $request): RedirectResponse
     {
         if (Auth::check()) {
