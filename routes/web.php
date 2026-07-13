@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
         ->name('doctor.index');
 
     Route::middleware('role:member')->group(function () {
+        Route::get('/artikel', [ArticleController::class, 'memberIndex'])->name('article.member_index');
         // TODO: Isi routing untuk member.
         // show consultation detail
         Route::get(
@@ -87,6 +88,11 @@ Route::middleware('auth')->group(function () {
         ->name('doctor.show');
 
     Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/articles', [ArticleController::class, 'index'])->name('article.index');
+        Route::post('/admin/articles/store-ajax', [ArticleController::class, 'storeAjax'])->name('article.storeAjax');
+        Route::post('/admin/articles/get-edit-form', [ArticleController::class, 'getEditForm'])->name('article.getEditForm');
+        Route::post('/admin/articles/save-update', [ArticleController::class, 'saveDataUpdate'])->name('article.saveDataUpdate');
+        Route::post('/admin/articles/delete', [ArticleController::class, 'deleteData'])->name('article.deleteData');
 
         Route::post('/doctor/getEditFormB', [DoctorController::class, 'getEditFormB'])
             ->name('doctor.getEditFormB');
@@ -104,8 +110,6 @@ Route::middleware('auth')->group(function () {
             ->name('doctor.update');
         Route::delete('/doctor/{doctor}', [DoctorController::class, 'destroy'])
             ->name('doctor.destroy');
-
-        Route::get('/artikel', [ArticleController::class, 'memberIndex'])->name('article.member_index');
         Route::get('/artikel/{article}', [ArticleController::class, 'show'])->name('article.show');
 
         Route::resource('admin/article', ArticleController::class)->except(['show']);
@@ -135,12 +139,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/members/get-edit-form', [MemberController::class, 'getEditForm'])->name('member.getEditForm');
         Route::post('/members/save-update', [MemberController::class, 'saveDataUpdate'])->name('member.saveDataUpdate');
         Route::post('/members/delete', [MemberController::class, 'deleteData'])->name('member.deleteData');
-        
+
         Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultation.index');
         Route::post('/consultations/store-ajax', [ConsultationController::class, 'storeAjax'])->name('consultation.storeAjax');
         Route::post('/consultations/get-edit-form', [ConsultationController::class, 'getEditForm'])->name('consultation.getEditForm');
         Route::post('/consultations/save-update', [ConsultationController::class, 'saveDataUpdate'])->name('consultation.saveDataUpdate');
         Route::post('/consultations/delete', [ConsultationController::class, 'deleteData'])->name('consultation.deleteData');
+    
     Route::get('/', function () {
         return view('home');
     })->name('home');

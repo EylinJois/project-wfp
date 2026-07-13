@@ -6,24 +6,159 @@ use App\Models\Article;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
-    //ADMINISTRATOR
+    // public function index()
+    // {
+    //     $user = auth()->user();
+
+    //     if ($user->role === 'admin') {
+    //         $articles = Article::query()
+    //             ->orderByDesc('date')
+    //             ->get();
+
+    //         $doctors = Doctor::all();
+    //         return view('article.index', compact('articles', 'doctors'));
+    //     } else {
+    //         abort(403, '403 Forbidden Access');
+    //     }
+    // }
+
     public function index()
     {
-        $user = auth()->user();
+        $articles = Article::latest()->get();
+        $doctors = Doctor::orderBy('fullname')->get();
 
-        if ($user->role === 'admin') {
-            $articles = Article::query()
-                ->orderByDesc('date')
-                ->get();
+        return view('members.article', compact('articles', 'doctors'));
+    }
 
-            $doctors = Doctor::all();
-            return view('article.index', compact('articles', 'doctors'));
-        } else {
-            abort(403, '403 Forbidden Access');
+    public function storeAjax(Request $request)
+    {
+        $request->validate([
+            'title'     => 'required|string|max:255',
+            'date'      => 'required|date',
+            'content'   => 'required|string',
+            'photo'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'doctor_id' => 'required|exists:doctors,id',
+        ]);
+
+        $filename = null;
+
+        if ($request->hasFile('photo')) {
+            $filename = Str::uuid() . '.' . $request->file('photo')->getClientOriginalExtension();
+            $request->file('photo')->storeAs('photos', $filename, 'public');
         }
+
+        $article = Article::create([
+            'title'     => $request->title,
+            'date'      => $request->date,
+            'content'   => $request->content,
+            'photo'     => $filename,
+            'doctor_id' => $request->doctor_id,
+        ]);
+
+        $article->load('doctor');
+
+        return response()->json([
+            'status' => 'oke',
+            'article' => [
+                'id'          => $article->id,
+                'title'       => $article->title,
+                'date'        => $article->date,
+                'content'     => $article->content,
+                'photo_url'   => $article->photo ? asset('storage/photos/' . $article->photo) : null,
+                'doctor_id'   => $article->doctor_id,
+                'doctor_name' => $article->doctor->fullname ?? '-',
+                'created_at'  => $article->created_at->toDateTimeString(),
+                'updated_at'  => $article->updated_at->toDateTimeString(),
+            ]
+        ]);
+    }
+
+    public function getEditForm(Request $request)
+    {
+        $article = Article::findOrFail($request->id);
+
+        return response()->json([
+            'id'        => $article->id,
+            'title'     => $article->title,
+            'date'      => $article->date,
+            'content'   => $article->content,
+            'doctor_id' => $article->doctor_id,
+            'photo_url' => $article->photo ? asset('storage/photos/' . $article->photo) : null,
+        ]);
+    }
+
+    public function saveDataUpdate(Request $request)
+    {
+        $request->validate([
+            'id'        => 'required|exists:articles,id',
+            'title'     => 'required|string|max:255',
+            'date'      => 'required|date',
+            'content'   => 'required|string',
+            'photo'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'doctor_id' => 'required|exists:doctors,id',
+        ]);
+
+        $article = Article::find($request->id);
+
+        if ($article) {
+            $article->title = $request->title;
+            $article->date = $request->date;
+            $article->content = $request->content;
+            $article->doctor_id = $request->doctor_id;
+
+            if ($request->hasFile('photo')) {
+                if ($article->photo && Storage::disk('public')->exists('photos/' . $article->photo)) {
+                    Storage::disk('public')->delete('photos/' . $article->photo);
+                }
+
+                $filename = Str::uuid() . '.' . $request->file('photo')->getClientOriginalExtension();
+                $request->file('photo')->storeAs('photos', $filename, 'public');
+                $article->photo = $filename;
+            }
+
+            $article->save();
+            $article->load('doctor');
+
+            return response()->json([
+                'status'      => 'oke',
+                'title'       => $article->title,
+                'date'        => $article->date,
+                'content'     => $article->content,
+                'doctor_id'   => $article->doctor_id,
+                'doctor_name' => $article->doctor->fullname ?? '-',
+                'photo_url'   => $article->photo ? asset('storage/photos/' . $article->photo) : null,
+                'updated_at'  => $article->updated_at->toDateTimeString()
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'gagal',
+            'msg' => 'Artikel tidak ditemukan.'
+        ]);
+    }
+
+    public function deleteData(Request $request)
+    {
+        $article = Article::find($request->id);
+
+        if ($article) {
+            if ($article->photo && Storage::disk('public')->exists('photos/' . $article->photo)) {
+                Storage::disk('public')->delete('photos/' . $article->photo);
+            }
+
+            $article->delete();
+
+            return response()->json(['status' => 'oke']);
+        }
+
+        return response()->json([
+            'status' => 'gagal',
+            'msg' => 'Artikel tidak ditemukan.'
+        ]);
     }
 
     public function create()
@@ -163,7 +298,7 @@ class ArticleController extends Controller
 
         $articles = $query->get();
 
-        return view('article.member_index', compact('articles'));
+        return view('members.article', compact('articles'));
     }
 
     public function show(Article $article)
