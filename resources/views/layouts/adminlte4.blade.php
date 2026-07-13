@@ -140,7 +140,7 @@
 
                         @if (Auth::user()->is_admin)
                             <li class="nav-item">
-                                <a href={{ route('home') }} class="nav-link @yield('dashboard')">
+                                <a href={{ route('dashboard') }} class="nav-link @yield('dashboard')">
                                     <i class="nav-icon bi bi-speedometer"></i>
                                     <p>Dashboard</p>
                                 </a>
@@ -158,7 +158,7 @@
 
                         @if (!is_null(Auth::user()->member_id) || !is_null(Auth::user()->doctor_id))
                             <li class="nav-item">
-                                <a href={{ route('article.member_index') }} class="nav-link @yield('menu-article')">
+                                <a href={{ route('article.index') }} class="nav-link @yield('menu-article')">
                                     <i class="nav-icon fa-regular fa-newspaper"></i>
                                     <p>Article</p>
                                 </a>

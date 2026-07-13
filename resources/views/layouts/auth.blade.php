@@ -72,7 +72,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* --- UBAH DUA BARIS INI --- */
             min-height: 100vh;
             padding: 40px 0;
             margin: 0;

@@ -297,8 +297,9 @@ class ArticleController extends Controller
         }
 
         $articles = $query->get();
+        $doctors = Doctor::all();
 
-        return view('members.article', compact('articles'));
+        return view('members.article', compact('articles', 'doctors'));
     }
 
     public function show(Article $article)

@@ -9,6 +9,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\SpecialtyController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 
 Route::middleware('guest')->group(function () {
     Route::get('auth/login', [AuthController::class, 'showLogin'])->name('login');
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:doctor')->group(function () {
+        Route::get('/artikel', [ArticleController::class, 'memberIndex'])->name('article.member_index');
         Route::get('/doctor/editProfile', [DoctorController::class, 'editProfile'])
             ->name('doctor.editProfile');
         Route::put('/doctor/updateProfile/{doctor}', [DoctorController::class, 'updateProfile'])
@@ -79,6 +81,8 @@ Route::middleware('auth')->group(function () {
         ->name('doctor.show');
 
     Route::middleware('role:admin')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
         Route::get('/admin/articles', [ArticleController::class, 'index'])->name('article.index');
         Route::post('/admin/articles/store-ajax', [ArticleController::class, 'storeAjax'])->name('article.storeAjax');
         Route::post('/admin/articles/get-edit-form', [ArticleController::class, 'getEditForm'])->name('article.getEditForm');

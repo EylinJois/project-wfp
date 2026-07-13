@@ -5,10 +5,11 @@
 
     <h1 class="mb-4">Articles</h1>
 
+    @if(Auth::user()->is_admin)
     <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalAddArticle">
         + New Article
     </button>
-
+@endif
     <div class="card p-3">
         <div class="table-responsive">
             <table class="table table-bordered table-striped mb-0">
@@ -22,7 +23,9 @@
                         <th class="px-3 py-2">Content</th>
                         <th class="px-3 py-2">Created</th>
                         <th class="px-3 py-2">Updated</th>
+                        @if(Auth::user()->is_admin)
                         <th class="px-3 py-2">Actions</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -40,6 +43,7 @@
                         <td class="px-3 py-2" id="td_content_{{ $article->id }}">{{ Str::limit($article->content, 80) }}</td>
                         <td class="px-3 py-2">{{ $article->created_at }}</td>
                         <td class="px-3 py-2" id="td_updated_{{ $article->id }}">{{ $article->updated_at }}</td>
+                        @if(Auth::user()->is_admin)
                         <td class="px-3 py-2">
                             <button
                                 type="button"
@@ -59,6 +63,7 @@
                                 Delete
                             </button>
                         </td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>

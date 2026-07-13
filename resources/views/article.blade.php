@@ -5,6 +5,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Manajemen Artikel Kesehatan</h1>
+        
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCreateArticle">
         </button>
     </div>
@@ -27,7 +28,9 @@
                         <th class="px-3 py-2">Konten</th>
                         <th class="px-3 py-2">Foto</th>
                         <th class="px-3 py-2">Penulis (Dokter)</th>
+                        @if(Auth::user()->is_admin)
                         <th class="px-3 py-2">Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -45,6 +48,7 @@
                                 @endif
                             </td>
                             <td class="px-3 py-2">{{ $article->doctor ? $article->doctor->fullname : 'N/A' }}</td>
+                            @if(Auth::user()->is_admin)
                             <td class="px-3 py-2 text-center">
                                 <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="{{ $article->id }}">
                                     Edit
@@ -56,6 +60,7 @@
                                     <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                                 </form>
                             </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>
