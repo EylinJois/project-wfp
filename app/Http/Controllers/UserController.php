@@ -6,16 +6,19 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use App\Models\Member;
+use App\Models\Doctor;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::query()
-            ->orderByDesc('created_at')
-            ->get();
+        $users = User::orderByDesc('created_at')->get();
 
-        return view('user', compact('users'));
+        $members = Member::orderBy('fullname')->get();
+        $doctors = Doctor::orderBy('fullname')->get();
+
+        return view('user', compact('users', 'members', 'doctors'));
     }
 
     public function create()
@@ -121,7 +124,7 @@ class UserController extends Controller
     public function getEditForm(Request $request)
     {
         $user = User::findOrFail($request->username);
-    
+
         return response()->json([
             'username'      => $user->username,
             'email'         => $user->email,
@@ -130,7 +133,7 @@ class UserController extends Controller
             'doctor_id'     => $user->doctor_id
         ]);
     }
-    
+
     public function saveDataUpdate(Request $request)
     {
         $request->validate([
@@ -140,27 +143,27 @@ class UserController extends Controller
             'member_id'  => 'nullable|integer|exists:members,id',
             'doctor_id'  => 'nullable|integer|exists:doctors,id',
         ]);
-    
+
         $user = User::where('username', $request->username)->first();
-    
+
         if ($user) {
             $user->email = $request->email;
             $user->phone_number = $request->phone_number;
             $user->member_id = $request->filled('member_id') ? $request->member_id : null;
             $user->doctor_id = $request->filled('doctor_id') ? $request->doctor_id : null;
-    
+
             if ($request->filled('password')) {
                 $user->password = bcrypt($request->password);
             }
-    
+
             $user->save();
-    
+
             return response()->json([
                 'status' => 'oke',
                 'updated_at' => $user->updated_at->toDateTimeString()
             ]);
         }
-    
+
         return response()->json([
             'status' => 'gagal',
             'msg' => 'User tidak ditemukan.'
