@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Consultation;
 use App\Models\Doctor;
+use App\Models\Member;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -28,11 +29,11 @@ class ConsultationController extends Controller
 
     public function index()
     {
-        $consultations = Consultation::query()
-            ->orderByDesc('time')
-            ->get();
-
-        return view('consultation', compact('consultations'));
+        $consultations = Consultation::latest()->get();
+        $members = Member::orderBy('fullname')->get();
+        $doctors = Doctor::orderBy('fullname')->get();
+    
+        return view('consultation', compact('consultations', 'members', 'doctors'));
     }
 
     public function showSchedule(Request $request, Doctor $doctor)
@@ -262,7 +263,7 @@ class ConsultationController extends Controller
         ]);
 
         return redirect()
-            ->route('consultation.index')
+            ->route('consultation')
             ->with('success', 'Consultation booked successfully.');
     }
 
@@ -310,13 +311,117 @@ class ConsultationController extends Controller
 
         $consultation->update($validated);
 
-        return redirect()->route('consultation.index');
+        return redirect()->route('consultation');
     }
 
     public function destroy(Consultation $consultation)
     {
         $consultation->delete();
 
-        return redirect()->route('consultation.index');
+        return redirect()->route('consultation');
+    }
+
+    public function storeAjax(Request $request)
+    {
+        $request->validate([
+            'time'               => 'required|date',
+            'status'             => 'required|string|max:20',
+            'consultation_type'  => 'required|in:none,ongoing,done',
+            'notes'              => 'nullable|string',
+            'member_id'          => 'required|exists:members,id',
+            'doctor_id'          => 'required|exists:doctors,id',
+        ]);
+
+        $consultation = Consultation::create($request->only([
+            'time', 'status', 'consultation_type', 'notes', 'member_id', 'doctor_id'
+        ]));
+
+        $consultation->load('member', 'doctor');
+
+        return response()->json([
+            'status' => 'oke',
+            'consultation' => [
+                'id'                 => $consultation->id,
+                'member_id'          => $consultation->member_id,
+                'doctor_id'          => $consultation->doctor_id,
+                'time'               => $consultation->time,
+                'status'             => $consultation->status,
+                'consultation_type'  => $consultation->consultation_type,
+                'notes'              => $consultation->notes,
+                'created_at'         => $consultation->created_at->toDateTimeString(),
+                'updated_at'         => $consultation->updated_at->toDateTimeString(),
+            ]
+        ]);
+    }
+
+    public function getEditForm(Request $request)
+    {
+        $consultation = Consultation::findOrFail($request->id);
+
+        return response()->json([
+            'id'                 => $consultation->id,
+            'member_id'          => $consultation->member_id,
+            'doctor_id'          => $consultation->doctor_id,
+            'time'               => optional($consultation->time)->format('Y-m-d\TH:i'),
+            'status'             => $consultation->status,
+            'consultation_type'  => $consultation->consultation_type,
+            'notes'              => $consultation->notes,
+        ]);
+    }
+
+    public function saveDataUpdate(Request $request)
+    {
+        $request->validate([
+            'id'                 => 'required|exists:consultations,id',
+            'time'               => 'required|date',
+            'status'             => 'required|string|max:20',
+            'consultation_type'  => 'required|in:none,ongoing,done',
+            'notes'              => 'nullable|string',
+            'member_id'          => 'required|exists:members,id',
+            'doctor_id'          => 'required|exists:doctors,id',
+        ]);
+
+        $consultation = Consultation::find($request->id);
+
+        if ($consultation) {
+            $consultation->time = $request->time;
+            $consultation->status = $request->status;
+            $consultation->consultation_type = $request->consultation_type;
+            $consultation->notes = $request->notes;
+            $consultation->member_id = $request->member_id;
+            $consultation->doctor_id = $request->doctor_id;
+            $consultation->save();
+
+            return response()->json([
+                'status'     => 'oke',
+                'member_id'  => $consultation->member_id,
+                'doctor_id'  => $consultation->doctor_id,
+                'time'       => $consultation->time,
+                'consultation_status' => $consultation->status,
+                'consultation_type'   => $consultation->consultation_type,
+                'notes'      => $consultation->notes,
+                'updated_at' => $consultation->updated_at->toDateTimeString()
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'gagal',
+            'msg' => 'Consultation tidak ditemukan.'
+        ]);
+    }
+
+    public function deleteData(Request $request)
+    {
+        $consultation = Consultation::find($request->id);
+
+        if ($consultation) {
+            $consultation->delete();
+            return response()->json(['status' => 'oke']);
+        }
+
+        return response()->json([
+            'status' => 'gagal',
+            'msg' => 'Consultation tidak ditemukan.'
+        ]);
     }
 }

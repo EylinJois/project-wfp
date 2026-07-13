@@ -135,6 +135,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/members/get-edit-form', [MemberController::class, 'getEditForm'])->name('member.getEditForm');
         Route::post('/members/save-update', [MemberController::class, 'saveDataUpdate'])->name('member.saveDataUpdate');
         Route::post('/members/delete', [MemberController::class, 'deleteData'])->name('member.deleteData');
+        
+        Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultation.index');
+        Route::post('/consultations/store-ajax', [ConsultationController::class, 'storeAjax'])->name('consultation.storeAjax');
+        Route::post('/consultations/get-edit-form', [ConsultationController::class, 'getEditForm'])->name('consultation.getEditForm');
+        Route::post('/consultations/save-update', [ConsultationController::class, 'saveDataUpdate'])->name('consultation.saveDataUpdate');
+        Route::post('/consultations/delete', [ConsultationController::class, 'deleteData'])->name('consultation.deleteData');
     Route::get('/', function () {
         return view('home');
     })->name('home');
