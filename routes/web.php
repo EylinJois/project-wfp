@@ -30,7 +30,6 @@ Route::middleware('auth')->group(function () {
         ->name('doctor.index');
 
     Route::middleware('role:member')->group(function () {
-        // TODO: Isi routing untuk member.
         // show consultation detail
         Route::get(
             '/consultation/{consultation}',
@@ -45,14 +44,9 @@ Route::middleware('auth')->group(function () {
             '/history/{consultation}',
             [ConsultationController::class, 'historyDetail']
         )->name('member.history.detail');
-        // Route::post(
-        //     '/chat',
-        //     [ChatController::class, 'store']
-        // )->name('chat.store');
     });
 
     Route::middleware('role:doctor')->group(function () {
-        // TODO: Isi routing untuk dokter.
         Route::get('/doctor/editProfile', [DoctorController::class, 'editProfile'])
             ->name('doctor.editProfile');
         Route::put('/doctor/updateProfile/{doctor}', [DoctorController::class, 'updateProfile'])
@@ -77,10 +71,6 @@ Route::middleware('auth')->group(function () {
             '/doctor/schedule',
             [ConsultationController::class, 'schedule']
         )->name('doctor.schedule');
-        // Route::post(
-        //     '/chat',
-        //     [ChatController::class, 'store']
-        // )->name('doctor.chat.store');
     });
 
     Route::get('/doctor/{doctor}', [DoctorController::class, 'show'])
@@ -147,7 +137,6 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // TODO: Ini dipindahkan soalnya routing article/db bisa salah kebaca sama laravelnya.
     Route::resource('article', ArticleController::class)->names([
         'index' => 'article.index',
         'show' => 'article.show',

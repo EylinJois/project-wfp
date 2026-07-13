@@ -1,5 +1,3 @@
-{{-- TODO: Tidak ada pesan error saat ada kegagalan saat register. --}}
-
 @extends('layouts.auth')
 
 @section('content')

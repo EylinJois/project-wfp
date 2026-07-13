@@ -1,4 +1,4 @@
-{{-- TODO: Tidak ada pesan error saat ada kegagalan saat login. --}}
+
 @extends('layouts.auth')
 
 @section('content')
@@ -16,7 +16,6 @@
         
         <div class="card-body login-card-body">
 
-            {{-- TODO: Delete later --}}
             <div class="mb-4 p-3 bg-warning rounded border">
                 <label for="preset" class="form-label text-xs fw-bold">Choose a test account</label>
                 <div class="input-group input-group-sm">
