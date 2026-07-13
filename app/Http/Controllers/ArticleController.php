@@ -31,7 +31,7 @@ class ArticleController extends Controller
         $articles = Article::latest()->get();
         $doctors = Doctor::orderBy('fullname')->get();
 
-        return view('members.article', compact('articles', 'doctors'));
+        return view('article', compact('articles', 'doctors'));
     }
 
     public function storeAjax(Request $request)

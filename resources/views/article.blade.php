@@ -7,7 +7,8 @@
         <h1>Manajemen Artikel Kesehatan</h1>
         
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCreateArticle">
-        </button>
+        
+            <i class="fas fa-plus"></i> Tambah Artikel</button>
     </div>
 
     @if(session('success'))

@@ -23,7 +23,6 @@ class Role
         $user = Auth::user();
 
         foreach ($roles as $role) {
-
             if ($role === 'admin' && $user->is_admin) {
                 return $next($request);
             }
@@ -37,6 +36,6 @@ class Role
             }
         }
 
-        abort(403, 'Unauthorized action. You don\'t have access to this page!');
+        abort(403,'block');
     }
 }

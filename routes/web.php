@@ -30,9 +30,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/doctor', [DoctorController::class, 'index'])
         ->name('doctor.index');
 
+    Route::middleware('role:member,doctor')->group(function () {
+        Route::get('/artikel', [ArticleController::class, 'memberIndex'])
+            ->name('article.member_index');
+        Route::get('/artikel/{article}', [ArticleController::class, 'show'])->name('article.show');
+    });
+
     Route::middleware('role:member')->group(function () {
-        Route::get('/artikel', [ArticleController::class, 'memberIndex'])->name('article.member_index');
-        // TODO: Isi routing untuk member.
         // show consultation detail
         Route::get(
             '/consultation/{consultation}',
@@ -50,7 +54,6 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:doctor')->group(function () {
-        Route::get('/artikel', [ArticleController::class, 'memberIndex'])->name('article.member_index');
         Route::get('/doctor/editProfile', [DoctorController::class, 'editProfile'])
             ->name('doctor.editProfile');
         Route::put('/doctor/updateProfile/{doctor}', [DoctorController::class, 'updateProfile'])
@@ -88,6 +91,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/articles/get-edit-form', [ArticleController::class, 'getEditForm'])->name('article.getEditForm');
         Route::post('/admin/articles/save-update', [ArticleController::class, 'saveDataUpdate'])->name('article.saveDataUpdate');
         Route::post('/admin/articles/delete', [ArticleController::class, 'deleteData'])->name('article.deleteData');
+        Route::post('admin/articles/store', [ArticleController::class, 'store'])->name('article.store');
+        Route::delete('admin/articles/destroy/{article}', [ArticleController::class, 'destroy'])->name('article.destroy');
 
         Route::post('/doctor/getEditFormB', [DoctorController::class, 'getEditFormB'])
             ->name('doctor.getEditFormB');
@@ -105,9 +110,7 @@ Route::middleware('auth')->group(function () {
             ->name('doctor.update');
         Route::delete('/doctor/{doctor}', [DoctorController::class, 'destroy'])
             ->name('doctor.destroy');
-        Route::get('/artikel/{article}', [ArticleController::class, 'show'])->name('article.show');
 
-        Route::resource('admin/article', ArticleController::class)->except(['show']);
 
         Route::get('/admin/consultation', [ConsultationController::class, 'index'])
             ->name('admin.consultation.index');
@@ -123,37 +126,37 @@ Route::middleware('auth')->group(function () {
         Route::resource('user', UserController::class)->names([
             'index' => 'user',
         ]);
-        Route::post('/user/getEditForm',[UserController::class,'getEditForm'])->name('user.getEditForm');
-        });
-        Route::post('/user/save-data-update', [UserController::class, 'saveDataUpdate'])->name('user.saveDataUpdate');
-        Route::post('/user/deleteData', [UserController::class, 'deleteData'])->name('user.deleteData');
-        Route::post('/user/store-ajax', [UserController::class, 'storeAjax'])->name('user.storeAjax');
+        Route::post('/user/getEditForm', [UserController::class, 'getEditForm'])->name('user.getEditForm');
+    });
+    Route::post('/user/save-data-update', [UserController::class, 'saveDataUpdate'])->name('user.saveDataUpdate');
+    Route::post('/user/deleteData', [UserController::class, 'deleteData'])->name('user.deleteData');
+    Route::post('/user/store-ajax', [UserController::class, 'storeAjax'])->name('user.storeAjax');
 
-        Route::get('/members', [MemberController::class, 'index'])->name('member.index');
-        Route::post('/members/store-ajax', [MemberController::class, 'storeAjax'])->name('member.storeAjax');
-        Route::post('/members/get-edit-form', [MemberController::class, 'getEditForm'])->name('member.getEditForm');
-        Route::post('/members/save-update', [MemberController::class, 'saveDataUpdate'])->name('member.saveDataUpdate');
-        Route::post('/members/delete', [MemberController::class, 'deleteData'])->name('member.deleteData');
+    Route::get('/members', [MemberController::class, 'index'])->name('member.index');
+    Route::post('/members/store-ajax', [MemberController::class, 'storeAjax'])->name('member.storeAjax');
+    Route::post('/members/get-edit-form', [MemberController::class, 'getEditForm'])->name('member.getEditForm');
+    Route::post('/members/save-update', [MemberController::class, 'saveDataUpdate'])->name('member.saveDataUpdate');
+    Route::post('/members/delete', [MemberController::class, 'deleteData'])->name('member.deleteData');
 
-        Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultation.index');
-        Route::post('/consultations/store-ajax', [ConsultationController::class, 'storeAjax'])->name('consultation.storeAjax');
-        Route::post('/consultations/get-edit-form', [ConsultationController::class, 'getEditForm'])->name('consultation.getEditForm');
-        Route::post('/consultations/save-update', [ConsultationController::class, 'saveDataUpdate'])->name('consultation.saveDataUpdate');
-        Route::post('/consultations/delete', [ConsultationController::class, 'deleteData'])->name('consultation.deleteData');
-    
+    Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultation.index');
+    Route::post('/consultations/store-ajax', [ConsultationController::class, 'storeAjax'])->name('consultation.storeAjax');
+    Route::post('/consultations/get-edit-form', [ConsultationController::class, 'getEditForm'])->name('consultation.getEditForm');
+    Route::post('/consultations/save-update', [ConsultationController::class, 'saveDataUpdate'])->name('consultation.saveDataUpdate');
+    Route::post('/consultations/delete', [ConsultationController::class, 'deleteData'])->name('consultation.deleteData');
+
     Route::get('/', function () {
         return view('home');
     })->name('home');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::resource('article', ArticleController::class)->names([
-        'index' => 'article.index',
-        'show' => 'article.show',
-        'create' => 'article.create',
-        'store' => 'article.store',
-        'edit' => 'article.edit',
-        'update' => 'article.update',
-        'destroy' => 'article.destroy',
-    ]);
+    // Route::resource('article', ArticleController::class)->names([
+    //     'index' => 'article.index',
+    //     'show' => 'article.show',
+    //     'create' => 'article.create',
+    //     'store' => 'article.store',
+    //     'edit' => 'article.edit',
+    //     'update' => 'article.update',
+    //     'destroy' => 'article.destroy',
+    // ]);
 });

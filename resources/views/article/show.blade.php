@@ -7,7 +7,7 @@
     <h1>{{ $article->title }}</h1>
     <div class="mb-3">
         @if ($article->photo)
-        <img src="{{ asset('storage/' . $article->photo) }}"
+        <img src="{{ asset('storage/photos/' . $article->photo) }}"
             alt="Foto Artikel"
             class="img-fluid rounded"
             style="max-height: 300px; object-fit: cover;">
@@ -20,8 +20,5 @@
     <p>{{ $article->content }}</p>
 
     <p><b>Dokter:</b> {{ $article->doctor->fullname ?? 'N/A' }}</p>
-    <a href="{{ route('article.index') }}" class="btn btn-secondary">
-        Back
-    </a>
 </div>
 @endsection
