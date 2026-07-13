@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat', [ChatController::class, 'store'])
         ->name('chat.store');
     Route::get('/consultation/indexConsultation', [ConsultationController::class, 'indexConsultation'])
-        ->name('consultation.index');
+        ->name('consultation.indexConsultation');
     Route::get('/booking/{doctor}/schedule', [ConsultationController::class, 'showSchedule'])
         ->name('booking.showSchedule');
     Route::post('/consultation/store', [ConsultationController::class, 'store'])

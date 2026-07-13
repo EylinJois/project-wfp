@@ -183,7 +183,7 @@
                                 <p>Consultation</p>
                             </a>
                         @elseif(Auth::user()->member_id)
-                            <a href="{{ route('consultation.index') }}" class="nav-link">
+                            <a href="{{ route('consultation.indexConsultation') }}" class="nav-link">
                                 <p>Consultation</p>
                             </a>
                         @endif
