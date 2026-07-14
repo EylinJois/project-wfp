@@ -4,6 +4,10 @@
 <div class="form-group">
     <label for="fullname" class="form-label">Full Name</label>
     <input class="form-control" type="text" id="fullname" name="fullname" value="{{ $data->fullname }}">
+    <label for="email" class="form-label">Email</label>
+    <input class="form-control" type="email" id="email" name="email" value="{{ $data->email }}">
+    <label for="phone" class="form-label">Phone</label>
+    <input class="form-control" type="text" id="phone" name="phone" value="{{ $data->phone }}">
     <label for="sip" class="form-label">SIP</label>
     <input class="form-control" type="text" id="sip" name="sip" value="{{ $data->sip }}">
     <label for="experience" class="form-label">Experience</label>

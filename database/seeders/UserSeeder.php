@@ -1,132 +1,110 @@
 <?php
 
 namespace Database\Seeders;
+
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $users = [
 
-            // ========================================= TEST =======================================
-
+            // ========================= ADMIN =========================
             [
-                'username' => 'admin', // ============================== ADMIN ======================
+                'username' => 'admin',
                 'password' => Hash::make('pwa'),
-                'email' => 'admin@wfp.com',
-                'phone_number' => '111100000001',
-                'is_admin' => 1, 
+                'role' => 'admin',
                 'member_id' => null,
                 'doctor_id' => null,
             ],
+
+            // ========================= MEMBER ========================
             [
-                'username' => 'member', // ============================== MEMBER ====================
+                'username' => 'member',
                 'password' => Hash::make('pwm'),
-                'email' => 'member@wfp.com',
-                'phone_number' => '222200000001',
-                'is_admin' => 0, 
+                'role' => 'member',
                 'member_id' => 1,
                 'doctor_id' => null,
             ],
             [
-                'username' => 'dokter', // ============================== DOKTER ====================
-                'password' => Hash::make('pwd'),
-                'email' => 'dokter@wfp.com',
-                'phone_number' => '333300000001',
-                'is_admin' => 0,
-                'member_id' => null,
-                'doctor_id' => 1,
-            ],
-
-            // ======================================== DUMMY =======================================
-
-            [
-                'username' => 'member2', // ============================== MEMBER ===================
-                'password' =>  Hash::make('pmember2'),
-                'email' => 'member2@wfp.com',
-                'phone_number' => '222200000002',
-                'is_admin' => 0,
+                'username' => 'member2',
+                'password' => Hash::make('pmember2'),
+                'role' => 'member',
                 'member_id' => 2,
                 'doctor_id' => null,
             ],
             [
-                'username' => 'member3', // ============================== MEMBER ===================
+                'username' => 'member3',
                 'password' => Hash::make('pmember3'),
-                'email' => 'member3@wfp.com',
-                'phone_number' => '222200000003',
-                'is_admin' => 0,
+                'role' => 'member',
                 'member_id' => 3,
                 'doctor_id' => null,
             ],
             [
-                'username' => 'member4', // ============================== MEMBER ===================
+                'username' => 'member4',
                 'password' => Hash::make('pmember4'),
-                'email' => 'member4@wfp.com',
-                'phone_number' => '222200000004',
-                'is_admin' => 0,
+                'role' => 'member',
                 'member_id' => 4,
                 'doctor_id' => null,
             ],
             [
-                'username' => 'member5', // ============================== MEMBER ===================
+                'username' => 'member5',
                 'password' => Hash::make('pmember5'),
-                'email' => 'member5@wfp.com',
-                'phone_number' => '222200000005',
-                'is_admin' => 0,
+                'role' => 'member',
                 'member_id' => 5,
                 'doctor_id' => null,
             ],
+
+            // ========================= DOCTOR ========================
             [
-                'username' => 'dokter2', // ============================== DOKTER ===================
+                'username' => 'dokter',
+                'password' => Hash::make('pwd'),
+                'role' => 'doctor',
+                'doctor_id' => 1,
+                'member_id' => null,
+            ],
+            [
+                'username' => 'dokter2',
                 'password' => Hash::make('pdokter2'),
-                'email' => 'dokter2@wfp.com',
-                'phone_number' => '333300000002',
-                'is_admin' => 0,
-                'member_id' => null,
+                'role' => 'doctor',
                 'doctor_id' => 2,
+                'member_id' => null,
             ],
             [
-                'username' => 'dokter3', // ============================== DOKTER ===================
+                'username' => 'dokter3',
                 'password' => Hash::make('pdokter3'),
-                'email' => 'dokter3@wfp.com',
-                'phone_number' => '333300000003',
-                'is_admin' => 0,
-                'member_id' => null,
+                'role' => 'doctor',
                 'doctor_id' => 3,
+                'member_id' => null,
             ],
             [
-                'username' => 'dokter4', // ============================== DOKTER ===================
+                'username' => 'dokter4',
                 'password' => Hash::make('pdokter4'),
-                'email' => 'dokter4@wfp.com',
-                'phone_number' => '333300000004',
-                'is_admin' => 0,
-                'member_id' => null,
+                'role' => 'doctor',
                 'doctor_id' => 4,
+                'member_id' => null,
             ],
             [
-                'username' => 'dokter5', // ============================== DOKTER ===================
+                'username' => 'dokter5',
                 'password' => Hash::make('pdokter5'),
-                'email' => 'dokter5@wfp.com',
-                'phone_number' => '333300000005',
-                'is_admin' => 0,
-                'member_id' => null,
+                'role' => 'doctor',
                 'doctor_id' => 5,
-            ]
+                'member_id' => null,
+            ],
         ];
 
         foreach ($users as $user) {
             User::updateOrCreate(
                 ['username' => $user['username']],
-                array_merge($user, [
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ])
+                [
+                    'password' => $user['password'],
+                    'role' => $user['role'],
+                    'member_id' => $user['member_id'],
+                    'doctor_id' => $user['doctor_id'],
+                ]
             );
         }
     }

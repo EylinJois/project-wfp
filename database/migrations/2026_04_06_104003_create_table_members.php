@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('fullname', 100);
+            $table->string('email')->unique();
+
+            $table->string('phone_number')->unique();
             $table->date('birth_of_date');
             $table->string('photo', 255);
 

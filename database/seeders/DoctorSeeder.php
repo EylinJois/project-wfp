@@ -15,6 +15,8 @@ class DoctorSeeder extends Seeder
         $doctors = [
             [
                 'fullname' => 'dr. Kevin Pratama',
+                'email' => 'kevin.pratama@example.com',
+                'phone_number' => '081234567890',
                 'sip' => 'SIP/101/A1/2024',
                 'experience' => '3 Tahun',
                 'photo' => 'dokter_kevin.png',
@@ -24,6 +26,8 @@ class DoctorSeeder extends Seeder
             ],
             [
                 'fullname' => 'drg. Rina Melati',
+                'email' => 'rina.melati@example.com',
+                'phone_number' => '081234567891',
                 'sip' => 'SIP/102/B1/2021',
                 'experience' => '6 Tahun',
                 'photo' => 'dokter_rina.png',
@@ -33,6 +37,8 @@ class DoctorSeeder extends Seeder
             ],
             [
                 'fullname' => 'dr. Hendra Saputra, Sp.A',
+                'email' => 'hendra.saputra@example.com',
+                'phone_number' => '081234567892',
                 'sip' => 'SIP/103/C1/2018',
                 'experience' => '12 Tahun',
                 'photo' => 'dokter_hendra.png',
@@ -42,6 +48,8 @@ class DoctorSeeder extends Seeder
             ],
             [
                 'fullname' => 'dr. Gita Saraswati, Sp.S',
+                'email' => 'gita.saraswati@example.com',
+                'phone_number' => '081234567893',
                 'sip' => 'SIP/104/D1/2020',
                 'experience' => '8 Tahun',
                 'photo' => 'dokter_gita.jpg',
@@ -51,6 +59,8 @@ class DoctorSeeder extends Seeder
             ],
             [
                 'fullname' => 'dr. Ahmad Fauzi, Sp.PD',
+                'email' => 'ahmad.fauzi@example.com',
+                'phone_number' => '081234567894',
                 'sip' => 'SIP/105/E1/2016',
                 'experience' => '15 Tahun',
                 'photo' => 'dokter_ahmad.jpg',
@@ -62,7 +72,11 @@ class DoctorSeeder extends Seeder
 
         foreach ($doctors as $doctor) {
             DB::table('doctors')->updateOrInsert(
-                ['sip' => $doctor['sip']],
+                [
+                    'sip' => $doctor['sip'],
+                    'email' => $doctor['email'],
+                    'phone_number' => $doctor['phone_number'],
+                ],
                 array_merge($doctor, [
                     'created_at' => now(),
                     'updated_at' => now(),

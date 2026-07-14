@@ -138,7 +138,7 @@
                             </a>
                         </li>
 
-                        @if (Auth::user()->is_admin)
+                        @if (Auth::user()->role=="admin")
                             <li class="nav-item">
                                 <a href={{ route('dashboard') }} class="nav-link @yield('dashboard')">
                                     <i class="nav-icon bi bi-speedometer"></i>
@@ -203,7 +203,7 @@
                             </li>
                         @endif
 
-                        @if (Auth::user()->is_admin)
+                        @if (Auth::user()->role=="admin")
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon bi bi-table"></i>

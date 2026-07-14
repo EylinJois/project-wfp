@@ -4,12 +4,12 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\SpecialtyController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
 
 Route::middleware('guest')->group(function () {
     Route::get('auth/login', [AuthController::class, 'showLogin'])->name('login');
@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
             '/consultation/{consultation}',
             [ConsultationController::class, 'show']
         )->name('consultation.show');
-        //history consultation
+        // history consultation
         Route::get(
             '/history',
             [ConsultationController::class, 'history']
@@ -87,9 +87,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/admin/articles', [ArticleController::class, 'index'])->name('article.index');
-        Route::post('/admin/articles/store-ajax', [ArticleController::class, 'storeAjax'])->name('article.storeAjax');
-        Route::post('/admin/articles/get-edit-form', [ArticleController::class, 'getEditForm'])->name('article.getEditForm');
-        Route::post('/admin/articles/save-update', [ArticleController::class, 'saveDataUpdate'])->name('article.saveDataUpdate');
+        Route::get('/admin/article/{article}/edit', [ArticleController::class, 'edit'])
+            ->name('article.edit');
+        Route::put('/admin/article/{article}', [ArticleController::class, 'update'])
+            ->name('article.update');
+        // Route::post('/admin/articles/store-ajax', [ArticleController::class, 'storeAjax'])->name('article.storeAjax');
+        // Route::post('/admin/articles/get-edit-form', [ArticleController::class, 'getEditForm'])->name('article.getEditForm');
+        // Route::post('/admin/articles/save-update', [ArticleController::class, 'saveDataUpdate'])->name('article.saveDataUpdate');
         Route::post('/admin/articles/delete', [ArticleController::class, 'deleteData'])->name('article.deleteData');
         Route::post('admin/articles/store', [ArticleController::class, 'store'])->name('article.store');
         Route::delete('admin/articles/destroy/{article}', [ArticleController::class, 'destroy'])->name('article.destroy');
@@ -110,7 +114,6 @@ Route::middleware('auth')->group(function () {
             ->name('doctor.update');
         Route::delete('/doctor/{doctor}', [DoctorController::class, 'destroy'])
             ->name('doctor.destroy');
-
 
         Route::get('/admin/consultation', [ConsultationController::class, 'index'])
             ->name('admin.consultation.index');

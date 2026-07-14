@@ -23,7 +23,7 @@
                         <th class="px-3 py-2">Notes</th>
                         <th class="px-3 py-2">Created</th>
                         <th class="px-3 py-2">Updated</th>
-                        <th class="px-3 py-2">Actions</th>
+                        <th class="px-3 py-2">Actions for Pending Status</th>
                     </tr>
                 </thead>
                 <tbody>

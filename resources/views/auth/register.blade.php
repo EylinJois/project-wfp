@@ -23,21 +23,6 @@
                         <input type="text" name="username" id="username" class="form-control" value="{{ old('username') }}" required>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <div class="input-group">
-                        <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
-                    </div>
-                </div>
-             
-                <div class="mb-3">
-                    <label for="nomor_telepon" class="form-label">Phone Number</label>
-                    <div class="input-group">
-                        <input type="text" name="nomor_telepon" id="nomor_telepon" class="form-control" value="{{ old('nomor_telepon') }}" required>
-                    </div>
-                </div>
-
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <div class="input-group">

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
@@ -24,26 +25,26 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect('/');
         }
-    
+
         $validated = $request->validate([
             'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
-    
-        $user = \App\Models\User::where('username', $validated['username'])->first();
-    
-        if (!$user) {
+
+        $user = User::where('username', $validated['username'])->first();
+
+        if (! $user) {
             return back()->withErrors([
                 'username' => 'Username not found.',
             ])->withInput();
         }
-    
+
         if (Auth::attempt($validated)) {
             $request->session()->regenerate();
-    
+
             return redirect()->intended('/')->with('status', 'Welcome back!');
         }
-    
+
         return back()->withErrors([
             'password' => 'Incorrect password!',
         ])->withInput();
@@ -57,20 +58,16 @@ class AuthController extends Controller
     public function register(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'nomor_telepon' => ['required', 'string', 'max:20'],
-            'password' => ['required', 'string', 'confirmed']
+            'username' => 'required|unique:users',
+            'password' => 'required|confirmed',
         ]);
 
-        \App\Models\User::create([
+        User::create([
             'username' => $validated['username'],
-            'email' => $validated['email'],
-            'nomor_telepon' => $validated['nomor_telepon'],
             'password' => Hash::make($validated['password']),
-            'is_admin' => false,
+            'role' => 'member',
             'member_id' => null,
-            'dokter_id' => null
+            'doctor_id' => null,
         ]);
 
         return redirect('/auth/login')->with('status', 'Registration successful! Please sign in.');
@@ -79,14 +76,10 @@ class AuthController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
-    
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-    
+
         return redirect('/auth/login')->with('status', 'Sign out success!');
     }
-
 }
-
-
-

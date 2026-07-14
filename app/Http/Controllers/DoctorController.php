@@ -43,6 +43,8 @@ class DoctorController extends Controller
         try {
             $validated = $request->validate([
                 'fullname' => ['required', 'string', 'max:100'],
+                'email' => ['required', 'email', 'max:100', Rule::unique('doctors', 'email')],
+                'phone_number' => ['required', 'string', 'max:15', Rule::unique('doctors', 'phone_number')],
                 'sip' => ['required', 'string', 'max:50', Rule::unique('doctors', 'sip')],
                 'experience' => ['required', 'string', 'max:255'],
                 'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png'],
@@ -207,6 +209,8 @@ class DoctorController extends Controller
         $data = Doctor::findOrFail($id);
 
         $data->fullname = $request->fullname;
+        $data->email = $request->email;
+        $data->phone = $request->phone;
         $data->sip = $request->sip;
         $data->experience = $request->experience;
         $data->specialty_id = $request->specialty_id;

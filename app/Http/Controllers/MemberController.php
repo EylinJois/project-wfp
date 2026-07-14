@@ -23,10 +23,11 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'fullname' => ['required', 'string', 'max:100'],
-            'birth_of_date' => ['required', 'date'],
-            'photo' => ['required', 'string', 'max:255'],
-        ]);
+            'fullname' => 'required',
+            'email' => 'required|email|unique:members,email',
+            'phone_number' => 'required|unique:members,phone_number',
+            'birth_of_date' => 'required',
+            'photo' => 'required']);
 
         Member::create($validated);
 
@@ -66,29 +67,31 @@ class MemberController extends Controller
     public function storeAjax(Request $request)
     {
         $request->validate([
-            'fullname'      => 'required|string|max:100',
+            'fullname' => 'required|string|max:100',
+            'email' => 'required|email|unique:members,email',
+            'phone_number' => 'required|unique:members,phone_number',
             'birth_of_date' => 'required|date',
-            'photo'         => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $path = $request->file('photo')->store('members', 'public');
 
         $member = Member::create([
-            'fullname'      => $request->fullname,
+            'fullname' => $request->fullname,
             'birth_of_date' => $request->birth_of_date,
-            'photo'         => $path,
+            'photo' => $path,
         ]);
 
         return response()->json([
             'status' => 'oke',
             'member' => [
-                'id'            => $member->id,
-                'fullname'      => $member->fullname,
+                'id' => $member->id,
+                'fullname' => $member->fullname,
                 'birth_of_date' => $member->birth_of_date,
-                'photo_url'     => Storage::url($member->photo),
-                'created_at'    => $member->created_at->toDateTimeString(),
-                'updated_at'    => $member->updated_at->toDateTimeString(),
-            ]
+                'photo_url' => Storage::url($member->photo),
+                'created_at' => $member->created_at->toDateTimeString(),
+                'updated_at' => $member->updated_at->toDateTimeString(),
+            ],
         ]);
     }
 
@@ -97,20 +100,22 @@ class MemberController extends Controller
         $member = Member::findOrFail($request->id);
 
         return response()->json([
-            'id'            => $member->id,
-            'fullname'      => $member->fullname,
+            'id' => $member->id,
+            'fullname' => $member->fullname,
             'birth_of_date' => $member->birth_of_date,
-            'photo_url'     => $member->photo ? Storage::url($member->photo) : null,
+            'photo_url' => $member->photo ? Storage::url($member->photo) : null,
         ]);
     }
 
     public function saveDataUpdate(Request $request)
     {
         $request->validate([
-            'id'            => 'required|exists:members,id',
-            'fullname'      => 'required|string|max:100',
+            'id' => 'required|exists:members,id',
+            'fullname' => 'required|string|max:100',
+            'email' => 'required|email|unique:members,email,' . $request->id,
+            'phone_number' => 'required|unique:members,phone_number,' . $request->id,
             'birth_of_date' => 'required|date',
-            'photo'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $member = Member::find($request->id);
@@ -129,17 +134,17 @@ class MemberController extends Controller
             $member->save();
 
             return response()->json([
-                'status'     => 'oke',
-                'fullname'   => $member->fullname,
+                'status' => 'oke',
+                'fullname' => $member->fullname,
                 'birth_of_date' => $member->birth_of_date,
-                'photo_url'  => Storage::url($member->photo),
-                'updated_at' => $member->updated_at->toDateTimeString()
+                'photo_url' => Storage::url($member->photo),
+                'updated_at' => $member->updated_at->toDateTimeString(),
             ]);
         }
 
         return response()->json([
             'status' => 'gagal',
-            'msg' => 'Member tidak ditemukan.'
+            'msg' => 'Member tidak ditemukan.',
         ]);
     }
 
@@ -159,7 +164,7 @@ class MemberController extends Controller
 
         return response()->json([
             'status' => 'gagal',
-            'msg' => 'Member tidak ditemukan.'
+            'msg' => 'Member tidak ditemukan.',
         ]);
     }
 }

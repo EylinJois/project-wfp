@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid mt-4">
 
-    <h1 class="mb-4">Dokter</h1>
+    <h1 class="mb-4">Doctors</h1>
 
     <div class="card p-3">
         <div class="table-responsive">
@@ -12,6 +12,8 @@
                     <tr>
                         <th class="px-3 py-2">ID</th>
                         <th class="px-3 py-2">Full Name</th>
+                        <th class="px-3 py-2">Email</th>
+                        <th class="px-3 py-2">Phone</th>
                         <th class="px-3 py-2">SIP</th>
                         <th class="px-3 py-2">Experience</th>
                         <th class="px-3 py-2">Photo</th>
@@ -27,6 +29,8 @@
                         <tr>
                             <td class="px-3 py-2">{{ $doctor->id }}</td>
                             <td class="px-3 py-2">{{ $doctor->full_name }}</td>
+                            <td class="px-3 py-2">{{ $doctor->email }}</td>
+                            <td class="px-3 py-2">{{ $doctor->phone }}</td>
                             <td class="px-3 py-2">{{ $doctor->sip }}</td>
                             <td class="px-3 py-2">{{ $doctor->experience }}</td>
                             <td class="px-3 py-2">{{ $doctor->photo }}</td>

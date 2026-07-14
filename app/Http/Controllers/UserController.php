@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Doctor;
+use App\Models\Member;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use App\Models\Member;
-use App\Models\Doctor;
 
 class UserController extends Controller
 {
@@ -33,7 +33,11 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'max:255'],
             'phone_number' => ['required', 'string', 'max:15', Rule::unique('users', 'phone_number')],
-            'is_admin' => ['sometimes', 'boolean'],
+            'role' => ['required', Rule::in([
+                'admin',
+                'doctor',
+                'member',
+            ])],
             'member_id' => ['nullable', 'integer', 'exists:member,id'],
             'doctor_id' => ['nullable', 'integer', 'exists:doctor,id'],
         ]);
@@ -62,7 +66,11 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')->ignore($user, 'username')],
             'password' => ['nullable', 'string', 'max:255'],
             'phone_number' => ['required', 'string', 'max:15', Rule::unique('users', 'phone_number')->ignore($user, 'username')],
-            'is_admin' => ['sometimes', 'boolean'],
+            'role' => ['required', Rule::in([
+                'admin',
+                'doctor',
+                'member',
+            ])],
             'member_id' => ['nullable', 'integer', 'exists:member,id'],
             'doctor_id' => ['nullable', 'integer', 'exists:doctor,id'],
         ]);
@@ -94,10 +102,12 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'username' => ['required', 'string', 'max:100', Rule::unique('users', 'username')],
-            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'max:255'],
-            'phone_number' => ['required', 'string', 'max:15', Rule::unique('users', 'phone_number')],
-            'is_admin' => ['sometimes', 'boolean'],
+            'role' => ['required', Rule::in([
+                'admin',
+                'doctor',
+                'member',
+            ])],
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -109,47 +119,37 @@ class UserController extends Controller
         return response()->json([
             'status' => 'oke',
             'users' => [
-                'username'     => $user->username,
-                'email'        => $user->email,
-                'phone_number' => $user->phone_number,
-                'is_admin'     => $user->is_admin,
-                'member_id'    => $user->member_id,
-                'doctor_id'    => $user->doctor_id,
-                'created_at'   => $user->created_at->toDateTimeString(),
-                'updated_at'   => $user->updated_at->toDateTimeString(),
-            ]
+                'username' => $user->username,
+                'role' => $user->role,
+                'member_id' => $user->member_id,
+                'doctor_id' => $user->doctor_id,
+            ],
         ]);
     }
 
     public function getEditForm(Request $request)
     {
-        $user = User::findOrFail($request->username);
+        $user = User::where('username', $request->username)->firstOrFail();
 
         return response()->json([
-            'username'      => $user->username,
-            'email'         => $user->email,
-            'phone_number'  => $user->phone_number,
-            'member_id'     => $user->member_id,
-            'doctor_id'     => $user->doctor_id
+            'username' => $user->username,
+            'member_id' => $user->member_id,
+            'doctor_id' => $user->doctor_id,
         ]);
     }
 
     public function saveDataUpdate(Request $request)
     {
         $request->validate([
-            'username'   => 'required',
-            'email'      => 'required|email',
-            'password'   => 'nullable|confirmed|min:6',
-            'member_id'  => 'nullable|integer|exists:members,id',
-            'doctor_id'  => 'nullable|integer|exists:doctors,id',
+            'username' => 'required',
+            'password' => 'nullable|confirmed|min:6',
+            'member_id' => 'nullable|integer|exists:members,id',
+            'doctor_id' => 'nullable|integer|exists:doctors,id',
         ]);
 
         $user = User::where('username', $request->username)->first();
 
-        if ($user) {
-            $user->email = $request->email;
-            $user->phone_number = $request->phone_number;
-            $user->member_id = $request->filled('member_id') ? $request->member_id : null;
+        if ($user) {$user->member_id = $request->filled('member_id') ? $request->member_id : null;
             $user->doctor_id = $request->filled('doctor_id') ? $request->doctor_id : null;
 
             if ($request->filled('password')) {
@@ -160,31 +160,31 @@ class UserController extends Controller
 
             return response()->json([
                 'status' => 'oke',
-                'updated_at' => $user->updated_at->toDateTimeString()
+                'updated_at' => $user->updated_at->toDateTimeString(),
             ]);
         }
 
         return response()->json([
             'status' => 'gagal',
-            'msg' => 'User tidak ditemukan.'
+            'msg' => 'User tidak ditemukan.',
         ]);
     }
+
     public function deleteData(Request $request)
     {
-        // Cari user berdasarkan username yang dikirim AJAX
-        $user = User::where('username', $request->username)->first();
-
+        $user = User::where('username', $request->username)
+            ->firstOrFail();
         if ($user) {
             $user->delete(); // Hapus dari database
 
             return response()->json([
-                'status' => 'oke'
+                'status' => 'oke',
             ]);
         }
 
         return response()->json([
             'status' => 'gagal',
-            'msg' => 'User tidak ditemukan.'
+            'msg' => 'User tidak ditemukan.',
         ]);
     }
 }

@@ -19,7 +19,7 @@ class UserFactory extends Factory
             'password' => Hash::make('password'),
             'email' => fake()->unique()->safeEmail(),
             'phone_number' => fake()->unique()->numerify('08##########'),
-            'is_admin' => 0,
+            'role' => fake()->randomElement(['admin', 'doctor', 'member']),
             'created_at' => fake()->dateTimeBetween('-1 month', 'now'),
             'updated_at' =>fake()->dateTime(now()),
         ];
